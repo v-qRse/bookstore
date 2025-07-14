@@ -52,31 +52,70 @@
             <h2>Адрес и оплата заказа</h2>
 
             <form action="#" th:action="@{/cart}" method="post" th:object="${booksOrder}">
-                <label>Название</label>
-                <input th:field="*{deliveryName}">
-    <!--            <span style="color: green;" th:if="${#fields.hasErrors('name')}">Ошибка</span>-->
+                <p>
+                    <label>Название</label>
+                    <input th:field="*{deliveryName}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('deliveryName')}">
+                        Введите
+                    </span>
+                </p>
 
-                <label>Улица</label>
-                <input th:field="*{deliveryStreet}">
+                <p>
+                    <label>Улица</label>
+                    <input th:field="*{deliveryStreet}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('deliveryStreet')}">
+                        Введите улицу
+                    </span>
+                </p>
 
-                <label>Город</label>
-                <input th:field="*{deliveryCity}">
+                <p>
+                    <label>Город</label>
+                    <input th:field="*{deliveryCity}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('deliveryCity')}">
+                        Введите город
+                    </span>
+                </p>
 
-                <label>Область</label>
-                <input th:field="*{deliveryState}">
+                <p>
+                    <label>Область</label>
+                    <input th:field="*{deliveryState}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('deliveryState')}">
+                        Введите область
+                    </span>
+                </p>
 
-                <label>Почтовый индекс</label>
-                <input th:field="*{deliveryZip}">
+                <p>
+                    <label>Почтовый индекс</label>
+                    <input th:field="*{deliveryZip}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('deliveryZip')}">
+                        Введите почтовый индекс
+                    </span>
+                </p>
 
 
-                <label>Номер карты</label>
-                <input th:field="*{ccNumber}">
+                <p>
+                    <label>Номер карты</label>
+                    <input th:field="*{ccNumber}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('ccNumber')}">
+                        Введите номер карты
+                    </span>
+                </p>
 
-                <label>Дата</label>
-                <input th:field="*{ccExpiration}">
+                <p>
+                    <label>Дата</label>
+                    <input th:field="*{ccExpiration}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('ccExpiration')}">
+                        Введите дату с карты
+                    </span>
+                </p>
 
-                <label>CVV</label>
-                <input th:field="*{ccCVV}">
+                <p>
+                    <label>CVV</label>
+                    <input th:field="*{ccCVV}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('ccCVV')}">
+                        Введите CVV
+                    </span>
+                </p>
 
                 <button>
                     Создать заказ

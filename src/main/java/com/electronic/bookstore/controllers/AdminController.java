@@ -4,10 +4,12 @@ import com.electronic.bookstore.security.Role;
 import com.electronic.bookstore.security.User;
 import com.electronic.bookstore.security.repositories.RolesRepository;
 import com.electronic.bookstore.security.repositories.UsersRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class AdminController {
    public String clientsPage(@RequestParam(value = "request", required = false) String request, Model model) {
       Role role = rolesRepository.findByName("ROLE_USER");
 
-      //TODO изменить
+      //TODO изменить одинаковый код
       List<User> users;
       if (request == null || request.isEmpty()) {
          users = usersRepository.findAll();
@@ -65,7 +67,7 @@ public class AdminController {
    @GetMapping("/employees")
    public String employeesPage(@RequestParam(value = "request", required = false) String request, Model model) {
       Role role = rolesRepository.findByName("ROLE_EMPLOYEE");
-      //TODO переделать
+      //TODO изменить одинаковый код
       List<User> users;
       if (request == null || request.isEmpty()) {
          users = usersRepository.findAll();
@@ -92,9 +94,11 @@ public class AdminController {
       return "/admin/employeeDesign";
    }
 
-   //TODO сделать валидацию
    @PostMapping("/add/employee")
-   public String addEmployee(User user) {
+   public String addEmployee(@Valid User user, Errors errors) {
+      if (errors.hasErrors()) {
+         return "/admin/employeeDesign";
+      }
       Role role = rolesRepository.findByName("ROLE_EMPLOYEE");
       user.setRoles(Arrays.asList(role));
       user.setPassword(passwordEncoder.encode(user.getPassword()));

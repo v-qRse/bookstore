@@ -7,9 +7,11 @@ import com.electronic.bookstore.repositories.OrdersRepository;
 import com.electronic.bookstore.repositories.BooksOnOrderRepository;
 import com.electronic.bookstore.repositories.BooksRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -62,18 +64,21 @@ public class MainController {
       return "cartPage";
    }
 
-   //TODO сделать валидацию
    //TODO не работает
    @PostMapping("/cart")
-   public String createOrder(@ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                             SessionStatus sessionStatus) {
+   public String createOrder(@Valid BooksOrder booksOrder,
+                             SessionStatus sessionStatus, Errors errors)
+   {
+      if (errors.hasErrors()) {
+         return "cartPage";
+      }
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
       //TODO заменить на список заказов после исправлении ошибки
       return "redirect:/";
    }
 
-   //TODO можно ли сделать лучше?
+   //TODO как сделать лучше?
    @PostMapping("/addBookToOrder")
    public String addBookToOrder(@RequestParam Long id,
                                 @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,

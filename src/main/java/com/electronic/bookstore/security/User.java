@@ -1,6 +1,8 @@
 package com.electronic.bookstore.security;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +17,16 @@ public class User{
    @GeneratedValue(strategy= GenerationType.AUTO)
    private Long id;
 
+   @NotBlank(message = "Введите имя")
    private String firstName;
+
+   @NotBlank(message = "Введите фамилию")
    private String lastName;
+
+   @NotBlank(message = "Введите email")
    private String email;
+
+   @NotBlank(message = "Введите пароль")
    private String password;
 
    @ManyToMany
