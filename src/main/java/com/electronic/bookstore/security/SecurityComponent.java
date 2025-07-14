@@ -41,8 +41,8 @@ public class SecurityComponent {
    public SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
       String[] openPaths = {"/", "/book", "/register"};
       String[] userPaths = {"/addBookToOrder", "/putBookFromOrder", "/deleteBookFromOrder", "/cart" , "/shopping-history"};
-      String[] employeePaths = {"/employee/**"};
-      String[] adminPaths = {"/admin/**"};
+      String[] employeePaths = {"/employee", "/employee/**"};
+      String[] adminPaths = {"/admin", "/admin/**"};
       return http.
               authorizeHttpRequests((authorizeRequests) ->
                       authorizeRequests.requestMatchers("/**").permitAll()

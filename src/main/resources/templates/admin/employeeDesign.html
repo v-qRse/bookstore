@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Employee design
+        </h1>
+        <a th:href="@{/}">Домашняя страница</a>
+        <a th:href="@{/admin}">Страница администраторов</a>
+        <a th:href="@{/admin/clients}">Список клиентов</a>
+        <a th:href="@{/admin/employees}">Список сотрудников</a>
+
+        <div>
+            <form action="#" th:action="@{/admin/add/employee}" method="post" th:object="${user}">
+                <label>Имя</label>
+                <input th:field="*{firstName}">
+
+                <label>Фамилия</label>
+                <input th:field="*{lastName}">
+
+                <label>email</label>
+                <input th:field="*{email}">
+
+                <label>Пароль</label>
+                <input th:field="*{password}">
+
+                <button>
+                    Создать
+                </button>
+            </form>
+        </div>
+    </body>
+</html>

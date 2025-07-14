@@ -41,6 +41,7 @@ public class EmployeeController {
       return "bookDesign";
    }
 
+   //TODO доделать валидацию
    @PostMapping("/add-book")
    public String saveBook(@Valid Book book, Errors errors) {
       if (errors.hasErrors()) {

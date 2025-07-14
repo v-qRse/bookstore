@@ -62,6 +62,7 @@ public class MainController {
       return "cartPage";
    }
 
+   //TODO сделать валидацию
    //TODO не работает
    @PostMapping("/cart")
    public String createOrder(@ModelAttribute(name = "booksOrder") BooksOrder booksOrder,

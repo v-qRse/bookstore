@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Clients list
+        </h1>
+        <a th:href="@{/}">Домашняя страница</a>
+        <a th:href="@{/admin}">Страница администраторов</a>
+        <a th:href="@{/admin/employees}">Список сотрудников</a>
+
+        <form action="#" th:action="@{/admin/clients}" method="get" th:object="${request}">
+            <input name="request" id="request" th:value="${request}">
+            <button>
+                Поиск
+            </button>
+        </form>
+
+        <div>
+            <div th:each="client: ${clients}">
+                <p>ID: <span th:text="${client.id}"></span></p>
+                <p>Имя: <span th:text="${client.firstName + ' ' + client.lastName}"></span></p>
+                <p>Роли:
+                    <span th:each="role: ${client.roles}">
+                        <span th:text="${role.name}">;</span>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

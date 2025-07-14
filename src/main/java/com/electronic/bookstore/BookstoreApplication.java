@@ -37,7 +37,7 @@ public class BookstoreApplication {
 			book.setLanguage("en");
 			book.setGenre(genresRepository.findById("FCTN").get());
 			book.setPublicationYear("2010");
-			book.setDescription("Книга прикинь");
+			book.setDescription("Книга");
 			book.setISBN("1111111111112");
 			book.setPages(1L);
 			book.setPrice(111L);
@@ -49,7 +49,7 @@ public class BookstoreApplication {
 			book.setLanguage("gn");
 			book.setGenre(genresRepository.findById("DICT").get());
 			book.setPublicationYear("2000");
-			book.setDescription("Книга прикинь да");
+			book.setDescription("Книга");
 			book.setISBN("1111111111113");
 			book.setPages(1123L);
 			book.setPrice(100500L);
