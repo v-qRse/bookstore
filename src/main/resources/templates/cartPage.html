@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Cart
+        </h1>
+
+        <a th:href="@{/}">Домашняя страница</a>
+
+        <div style="border: 2px solid red">
+            <h2>Книги в заказе</h2>
+
+            <div th:each="b : ${booksOrder.books}" style="border: 2px solid black">
+                <a th:text="${b.bookId.name}" th:href="@{/book(id=${b.bookId.id})}">
+                    Здесь должна быть картинка
+                </a>
+
+                <div>
+                    <form action="#" th:action="@{/addBookToOrder(id=${b.bookId.id})}" method="post">
+                        <button>
+                            +
+                        </button>
+                    </form>
+
+                    <p th:text="${booksOrder.getQuantityById(b.bookId.id)}">
+                    </p>
+
+                    <form action="#" th:action="@{/putBookFromOrder(id=${b.bookId.id})}" method="post">
+                        <button>
+                            -
+                        </button>
+                    </form>
+
+                    <form action="#" th:action="@{/deleteBookFromOrder(id=${b.bookId.id})}" method="post">
+                        <button>
+                            Удалить из корзины
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div style="border: 2px solid blue">
+            <h2>Адрес и оплата заказа</h2>
+
+            <form action="#" th:action="@{/cart}" method="post" th:object="${booksOrder}">
+                <label>Название</label>
+                <input th:field="*{deliveryName}">
+    <!--            <span style="color: green;" th:if="${#fields.hasErrors('name')}">Ошибка</span>-->
+
+                <label>Улица</label>
+                <input th:field="*{deliveryStreet}">
+
+                <label>Город</label>
+                <input th:field="*{deliveryCity}">
+
+                <label>Область</label>
+                <input th:field="*{deliveryState}">
+
+                <label>Почтовый индекс</label>
+                <input th:field="*{deliveryZip}">
+
+
+                <label>Номер карты</label>
+                <input th:field="*{ccNumber}">
+
+                <label>Дата</label>
+                <input th:field="*{ccExpiration}">
+
+                <label>CVV</label>
+                <input th:field="*{ccCVV}">
+
+                <button>
+                    Создать заказ
+                </button>
+            </form>
+        </div>
+    </body>
+</html>
+
+<!--//private String deliveryName;-->
+<!--//private String deliveryStreet;-->
+<!--//private String deliveryCity;-->
+<!--//private String deliveryState;-->
+<!--//private String deliveryZip;-->
+
+<!--private String ccNumber;-->
+<!--private String ccExpiration;-->
+<!--private String ccCVV;-->

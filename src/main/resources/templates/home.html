@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Test home
+        </h1>
+
+        <a th:href="@{/cart}">Заказ</a>
+
+        <div>
+            <div th:each="b : ${books}" style="border: 2px solid black">
+                <a th:text="${b.name}" th:href="@{/book(id=${b.id})}">
+                    Здесь должна быть картинка
+                </a>
+                <p th:if="${b.quantity < 1}">Товар закончился</p>
+                <p th:if="${b.quantity >= 1 && b.quantity < 5}">Осталось мало</p>
+
+                <div th:if="${b.quantity > 0}">
+                    <div th:if="${!booksOrder.containBook(b.id)}">
+                        <form action="#" th:action="@{/addBookToOrder(id=${b.id})}" method="post">
+                            <button>
+                                Добавление в корзину
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:unless="${!booksOrder.containBook(b.id)}">
+                        <form action="#" th:action="@{/addBookToOrder(id=${b.id})}" method="post">
+                            <button>
+                                +
+                            </button>
+                        </form>
+
+                        <p th:text="${booksOrder.getQuantityById(b.id)}">
+                        </p>
+
+                        <form action="#" th:action="@{/putBookFromOrder(id=${b.id})}" method="post">
+                            <button>
+                                -
+                            </button>
+                        </form>
+
+                        <form action="#" th:action="@{/deleteBookFromOrder(id=${b.id})}" method="post">
+                            <button>
+                                Удалить из корзины
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

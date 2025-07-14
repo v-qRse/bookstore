@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Book design
+        </h1>
+
+        <form action="#" th:action="@{/employee/add-book}" method="post" th:object="${book}">
+            <label>Название книги</label>
+            <input th:field="*{name}">
+            <span style="color: green;" th:if="${#fields.hasErrors('name')}">Ошибка</span>
+
+            <label>Автор книги </label>
+            <input th:field="*{author}">
+
+            <label>Язык книги</label>
+            <input th:field="*{language}">
+
+            <label>Жанр</label>
+            <select th:field="*{genre}">
+                <option th:each="g : ${genres}" th:value="${g.id}" th:text="${g.name}"/>
+            </select>
+
+            <label>Дата публикации</label>
+            <input th:field="*{publicationYear}">
+
+            <label>Описание книги</label>
+            <input th:field="*{description}">
+
+            <label>ISBN-13 книги</label>
+            <input th:field="*{ISBN}">
+
+            <label>Количество страниц в книге</label>
+            <input th:field="*{pages}">
+
+            <label>Цена книги</label>
+            <input th:field="*{price}">
+
+            <label>Укажите количество книг на складе</label>
+            <input th:field="*{quantity}">
+
+            <button>Добавить книгу</button>
+        </form>
+    </body>
+</html>
+<!--
+//id bigint primary key,
+//name varchar(50) not null,
+//author varchar(50) not null,
+//language varchar(20) not null,
+//genre varchar(4) not null,
+//publication_year varchar(4) not null,
+//description varchar(100) not null,
+//isbn varchar(13),
+//pages bigint not null,
+rating bigint,
+is_new bit,
+id_icon bigint,
+//price bigint not null,
+//quantity bigint not null
+!-->
