@@ -9,7 +9,7 @@
             Test home
         </h1>
 
-        <a th:href="@{/cart}">Заказ</a>
+        <a th:if="${!booksOrder.books.isEmpty()}" th:href="@{/cart}">Заказ</a>
 
         <div>
             <div th:each="b : ${books}" style="border: 2px solid black">

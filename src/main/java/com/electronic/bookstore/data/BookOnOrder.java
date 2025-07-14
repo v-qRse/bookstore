@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookOnOrder {
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
    @ManyToOne
-   private Book bookId;
+   private Book book;
    private Long quantity;
 
    public BookOnOrder(Book book, Long quantity) {
-      bookId = book;
+      this.book = book;
       this.quantity = quantity;
    }
 }

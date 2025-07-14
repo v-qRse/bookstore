@@ -15,7 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class BooksOrder {
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
    //private Status status;
 
@@ -36,13 +36,13 @@ public class BooksOrder {
 
    //TODO подумать как изменить
    public void addBook(BookOnOrder book) {
-      Long bookId = book.getBookId().getId();
+      Long bookId = book.getBook().getId();
       BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);
       if (bookOnOrder != null) {
          Long quantity = bookOnOrder.getQuantity() + book.getQuantity();
          if (quantity <= 0) {
             books.remove(bookOnOrder);
-         } else if (quantity <= bookOnOrder.getBookId().getQuantity()) {
+         } else if (quantity <= bookOnOrder.getBook().getQuantity()) {
             bookOnOrder.setQuantity(quantity);
          }
       } else {
@@ -72,10 +72,18 @@ public class BooksOrder {
 
    private BookOnOrder getBookOnOrderByBookId(Long id) {
       for (BookOnOrder book: books) {
-         if (Objects.equals(book.getBookId().getId(), id)) {
+         if (Objects.equals(book.getBook().getId(), id)) {
             return book;
          }
       }
       return null;
+   }
+
+   public Long getPrice() {
+      long count = 0;
+      for (BookOnOrder bookOnOrder: books) {
+         count += bookOnOrder.getQuantity()*bookOnOrder.getBook().getPrice();
+      }
+      return count;
    }
 }

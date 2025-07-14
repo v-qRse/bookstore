@@ -14,25 +14,25 @@ import lombok.*;
 @NoArgsConstructor
 public class Book {
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
    @NotBlank(message = "Имя обязательно")
    private String name;
 
    @NotBlank(message = "Укажите автора")
-   private String author;//
+   private String author;
 
    //TODO подумать об создании аналога жанра
    @NotBlank(message = "Укажите язык, на котором написана книга")
-   private String language;//
+   private String language;
 
    @ManyToOne
-   private Genre genre;//
+   private Genre genre;
 
-   //только год
+   //TODO только год
    @NotBlank(message = "Укажите год издания")
-   private String publicationYear;//
+   private String publicationYear;
 
    @Size(max = 100, message = "Описание максимум из 100 символов")
    private String description;
@@ -41,6 +41,7 @@ public class Book {
    private String ISBN;
 
    @NotNull(message = "Укажите количество книг")
+   @Min(value = 1, message = "Введите положительное число")
    private Long pages;
 
    private Long rating;

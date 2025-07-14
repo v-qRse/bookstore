@@ -47,22 +47,29 @@ public class MainController {
       return "home";
    }
 
+   @GetMapping("/book")
+   public String bookPage(@RequestParam("id") Long id, Model model) {
+      Optional<Book> book = booksRepository.findById(id);
+      if (book.isEmpty()) {
+         return "home";
+      }
+      model.addAttribute("book", book.get());
+      return "bookPage";
+   }
+
    @GetMapping("/cart")
    public String order() {
       return "cartPage";
    }
 
+   //TODO не работает
    @PostMapping("/cart")
    public String createOrder(@ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
                              SessionStatus sessionStatus) {
-      //TODO убрать
-      System.out.println("---------");
-      System.out.println(booksOrder);
-      System.out.println("---------");
-
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
-      return "redirect:/";//заменить на список заказов
+      //TODO заменить на список заказов после исправлении ошибки
+      return "redirect:/";
    }
 
    //TODO можно ли сделать лучше?
@@ -97,15 +104,5 @@ public class MainController {
    {
       booksOrder.deleteBook(id);
       return "redirect:" + request.getHeader("Referer");
-   }
-
-   @GetMapping("/book")
-   public String bookPage(@RequestParam("id") Long id, Model model) {
-      Optional<Book> book = booksRepository.findById(id);
-      if (book.isEmpty()) {
-         return "home";
-      }
-      model.addAttribute("book", book.get());
-      return "bookPage";
    }
 }
