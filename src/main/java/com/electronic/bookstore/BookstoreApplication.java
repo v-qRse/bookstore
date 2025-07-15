@@ -1,13 +1,18 @@
 package com.electronic.bookstore;
 
 import com.electronic.bookstore.data.Book;
+import com.electronic.bookstore.data.BookOnOrder;
+import com.electronic.bookstore.data.BooksOrder;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.GenresRepository;
+import com.electronic.bookstore.repositories.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Arrays;
 
 @SpringBootApplication
 public class BookstoreApplication {
@@ -17,7 +22,10 @@ public class BookstoreApplication {
 	}
 
 	@Bean
-	public ApplicationRunner bookDataLoader(BooksRepository repository, GenresRepository genresRepository) {
+	public ApplicationRunner bookDataLoader(
+			BooksRepository repository,
+			GenresRepository genresRepository)
+	{
 		return args -> {
 			Book book = new Book();
 			book.setName("Book1");

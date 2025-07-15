@@ -65,8 +65,11 @@ create table if not exists Books_Order (
 
 create table if not exists Book_On_Order (
     id bigint primary key,
-    books_order bigint not null,--booksOrder id
-    books_order_key bigint not null,--booksOrder id
-    book bigint not null,--book id
+    book bigint not null,
     quantity bigint not null
+);
+
+create table if not exists orders_books_on_order (
+    order_id bigint not null,
+    book_on_order_id bigint not null
 );

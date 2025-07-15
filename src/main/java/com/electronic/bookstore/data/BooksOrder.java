@@ -48,12 +48,18 @@ public class BooksOrder {
    @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
    private String ccExpiration;
 
+   @Column(name = "cc_cvv")
    @Digits(integer=3, fraction=0, message="Invalid CVV")
    private String ccCVV;
 
    //TODO добавить дату
 
    @OneToMany(cascade = CascadeType.ALL)
+   @JoinTable(name = "orders_books_on_order",
+               joinColumns = @JoinColumn(
+                       name = "order_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(
+                       name = "book_on_order_id", referencedColumnName = "id"))
    private List<BookOnOrder> books = new ArrayList<>();
 
    //TODO подумать как изменить

@@ -65,18 +65,17 @@ public class MainController {
       return "cartPage";
    }
 
-   //TODO не работает
-   //@Transactional
    @PostMapping("/cart")
-   public String createOrder(@Valid BooksOrder booksOrder, Errors errors,
+   @Transactional
+   public String createOrder(@Valid @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                             Errors errors,
                              SessionStatus sessionStatus)
    {
       if (errors.hasErrors()) {
          return "cartPage";
       }
-      for(BookOnOrder book: booksOrder.getBooks()) {
-         booksOnOrderRepository.save(book);
-      }
+      //TODO разобраться кто и почему присваивает id
+      booksOrder.setId(null);
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
       //TODO заменить на список заказов после исправлении ошибки
