@@ -24,8 +24,7 @@ public class BookstoreApplication {
 	@Bean
 	public ApplicationRunner bookDataLoader(
 			BooksRepository repository,
-			GenresRepository genresRepository,
-			OrdersRepository ordersRepository)
+			GenresRepository genresRepository)
 	{
 		return args -> {
 			Book book = new Book();
@@ -64,22 +63,6 @@ public class BookstoreApplication {
 			book.setPrice(100500L);
 			book.setQuantity(5L);
 			repository.save(book);
-
-			BookOnOrder bookOnOrder = new BookOnOrder(book, 2L);
-
-			BooksOrder order = new BooksOrder();
-			order.setBooks(Arrays.asList(bookOnOrder));
-			order.setCcCVV("cvv");
-			order.setCcExpiration("exp");
-			order.setCcNumber("number");
-			order.setDeliveryName("name");
-			order.setDeliveryStreet("street");
-			order.setDeliveryCity("city");
-			order.setDeliveryState("state");
-			order.setDeliveryZip("zip");
-			System.out.println("========");
-			ordersRepository.save(order);
-			System.out.println("========");
 		};
 	}
 
