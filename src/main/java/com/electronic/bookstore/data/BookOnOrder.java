@@ -15,11 +15,11 @@ public class BookOnOrder {
    private Long id;
 
    @ManyToOne
-   private Book bookId;
+   private Book book;
    private Long quantity;
 
    public BookOnOrder(Book book, Long quantity) {
-      bookId = book;
+      this.book = book;
       this.quantity = quantity;
    }
 }

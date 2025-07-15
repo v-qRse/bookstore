@@ -7,6 +7,7 @@ import com.electronic.bookstore.repositories.OrdersRepository;
 import com.electronic.bookstore.repositories.BooksOnOrderRepository;
 import com.electronic.bookstore.repositories.BooksRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,13 +54,12 @@ public class MainController {
    }
 
    @PostMapping("/cart")
+   @Transactional
    public String createOrder(@ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                             SessionStatus sessionStatus) {
-      //TODO убрать
-      System.out.println("---------");
-      System.out.println(booksOrder);
-      System.out.println("---------");
-
+                             SessionStatus sessionStatus)
+   {
+      //TODO разобраться кто и почему присваивает id
+      booksOrder.setId(null);
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
       return "redirect:/";//заменить на список заказов

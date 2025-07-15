@@ -16,27 +16,27 @@
             <h2>Книги в заказе</h2>
 
             <div th:each="b : ${booksOrder.books}" style="border: 2px solid black">
-                <a th:text="${b.bookId.name}" th:href="@{/book(id=${b.bookId.id})}">
+                <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}">
                     Здесь должна быть картинка
                 </a>
 
                 <div>
-                    <form action="#" th:action="@{/addBookToOrder(id=${b.bookId.id})}" method="post">
+                    <form action="#" th:action="@{/addBookToOrder(id=${b.book.id})}" method="post">
                         <button>
                             +
                         </button>
                     </form>
 
-                    <p th:text="${booksOrder.getQuantityById(b.bookId.id)}">
+                    <p th:text="${booksOrder.getQuantityById(b.book.id)}">
                     </p>
 
-                    <form action="#" th:action="@{/putBookFromOrder(id=${b.bookId.id})}" method="post">
+                    <form action="#" th:action="@{/putBookFromOrder(id=${b.book.id})}" method="post">
                         <button>
                             -
                         </button>
                     </form>
 
-                    <form action="#" th:action="@{/deleteBookFromOrder(id=${b.bookId.id})}" method="post">
+                    <form action="#" th:action="@{/deleteBookFromOrder(id=${b.book.id})}" method="post">
                         <button>
                             Удалить из корзины
                         </button>
@@ -82,13 +82,3 @@
         </div>
     </body>
 </html>
-
-<!--//private String deliveryName;-->
-<!--//private String deliveryStreet;-->
-<!--//private String deliveryCity;-->
-<!--//private String deliveryState;-->
-<!--//private String deliveryZip;-->
-
-<!--private String ccNumber;-->
-<!--private String ccExpiration;-->
-<!--private String ccCVV;-->

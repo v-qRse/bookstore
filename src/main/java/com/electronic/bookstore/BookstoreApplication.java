@@ -1,13 +1,18 @@
 package com.electronic.bookstore;
 
 import com.electronic.bookstore.data.Book;
+import com.electronic.bookstore.data.BookOnOrder;
+import com.electronic.bookstore.data.BooksOrder;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.GenresRepository;
+import com.electronic.bookstore.repositories.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Arrays;
 
 @SpringBootApplication
 public class BookstoreApplication {
@@ -17,7 +22,11 @@ public class BookstoreApplication {
 	}
 
 	@Bean
-	public ApplicationRunner bookDataLoader(BooksRepository repository, GenresRepository genresRepository) {
+	public ApplicationRunner bookDataLoader(
+			BooksRepository repository,
+			GenresRepository genresRepository,
+			OrdersRepository ordersRepository)
+	{
 		return args -> {
 			Book book = new Book();
 			book.setName("Book1");
@@ -55,6 +64,22 @@ public class BookstoreApplication {
 			book.setPrice(100500L);
 			book.setQuantity(5L);
 			repository.save(book);
+
+			BookOnOrder bookOnOrder = new BookOnOrder(book, 2L);
+
+			BooksOrder order = new BooksOrder();
+			order.setBooks(Arrays.asList(bookOnOrder));
+			order.setCcCVV("cvv");
+			order.setCcExpiration("exp");
+			order.setCcNumber("number");
+			order.setDeliveryName("name");
+			order.setDeliveryStreet("street");
+			order.setDeliveryCity("city");
+			order.setDeliveryState("state");
+			order.setDeliveryZip("zip");
+			System.out.println("========");
+			ordersRepository.save(order);
+			System.out.println("========");
 		};
 	}
 

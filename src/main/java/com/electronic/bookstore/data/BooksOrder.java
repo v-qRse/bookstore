@@ -29,20 +29,26 @@ public class BooksOrder {
    //TODO мб отдельная бд, привязанная к аккаунту
    private String ccNumber;
    private String ccExpiration;
+   @Column(name = "cc_cvv")
    private String ccCVV;
 
    @OneToMany(cascade = CascadeType.ALL)
+   @JoinTable(name = "orders_books_on_order",
+               joinColumns = @JoinColumn(
+                       name = "order_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(
+                       name = "book_on_order_id", referencedColumnName = "id"))
    private List<BookOnOrder> books = new ArrayList<>();
 
    //TODO подумать как изменить
    public void addBook(BookOnOrder book) {
-      Long bookId = book.getBookId().getId();
+      Long bookId = book.getBook().getId();
       BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);
       if (bookOnOrder != null) {
          Long quantity = bookOnOrder.getQuantity() + book.getQuantity();
          if (quantity <= 0) {
             books.remove(bookOnOrder);
-         } else if (quantity <= bookOnOrder.getBookId().getQuantity()) {
+         } else if (quantity <= bookOnOrder.getBook().getQuantity()) {
             bookOnOrder.setQuantity(quantity);
          }
       } else {
@@ -72,7 +78,7 @@ public class BooksOrder {
 
    private BookOnOrder getBookOnOrderByBookId(Long id) {
       for (BookOnOrder book: books) {
-         if (Objects.equals(book.getBookId().getId(), id)) {
+         if (Objects.equals(book.getBook().getId(), id)) {
             return book;
          }
       }

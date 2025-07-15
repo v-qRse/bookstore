@@ -21,7 +21,7 @@ create table if not exists Book (
     quantity bigint not null
 );
 
-create table if not exists BooksOrder (
+create table if not exists Books_Order (
    id bigint primary key,
    delivery_name varchar(50) not null,
    delivery_street varchar(50) not null,
@@ -33,11 +33,13 @@ create table if not exists BooksOrder (
    cc_cvv varchar(3) not null
 );
 
-create table if not exists BookOnOrder (
+create table if not exists Book_On_Order (
     id bigint primary key,
---    попытка
-    books_order bigint not null,
-    books_order_key bigint not null,
     book bigint not null,
     quantity bigint not null
+);
+
+create table if not exists orders_books_on_order (
+    order_id bigint not null,
+    book_on_order_id bigint not null
 );
