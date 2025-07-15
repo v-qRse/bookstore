@@ -41,23 +41,7 @@ public class AdminController {
    @GetMapping("/clients")
    public String clientsPage(@RequestParam(value = "request", required = false) String request, Model model) {
       Role role = rolesRepository.findByName("ROLE_USER");
-
-      //TODO изменить одинаковый код
-      List<User> users;
-      if (request == null || request.isEmpty()) {
-         users = usersRepository.findAll();
-      } else {
-         users = usersRepository.findUsersByFirstNameOrLastNameIgnoreCase(request, request);
-      }
-      List<User> clients = new ArrayList<>();
-      for(User user: users) {
-         for (Role r: user.getRoles()) {
-            if (r.equals(role)) {
-               clients.add(user);
-               break;
-            }
-         }
-      }
+      List<User> clients = getUsersByNameAndRole(request, role);
 
       model.addAttribute("request", request);
       model.addAttribute("clients", clients);
@@ -67,22 +51,7 @@ public class AdminController {
    @GetMapping("/employees")
    public String employeesPage(@RequestParam(value = "request", required = false) String request, Model model) {
       Role role = rolesRepository.findByName("ROLE_EMPLOYEE");
-      //TODO изменить одинаковый код
-      List<User> users;
-      if (request == null || request.isEmpty()) {
-         users = usersRepository.findAll();
-      } else {
-         users = usersRepository.findUsersByFirstNameOrLastNameIgnoreCase(request, request);
-      }
-      List<User> clients = new ArrayList<>();
-      for(User user: users) {
-         for (Role r: user.getRoles()) {
-            if (r.equals(role)) {
-               clients.add(user);
-               break;
-            }
-         }
-      }
+      List<User> clients = getUsersByNameAndRole(request, role);
 
       model.addAttribute("request", request);
       model.addAttribute("clients", clients);
@@ -104,5 +73,30 @@ public class AdminController {
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       usersRepository.save(user);
       return "redirect:/admin/employees";
+   }
+
+   private List<User> getUsersByNameAndRole(String name, Role role) {
+      List<User> users = getUsersByName(name);
+      return getUsersByRoleFromList(users, role);
+   }
+
+   private List<User> getUsersByName(String name) {
+      if (name == null || name.isEmpty()) {
+         return usersRepository.findAll();
+      }
+      return usersRepository.findUsersByFirstNameOrLastNameIgnoreCase(name, name);
+   }
+
+   private List<User> getUsersByRoleFromList(List<User> users, Role role) {
+      List<User> clients = new ArrayList<>();
+      for(User user: users) {
+         for (Role r: user.getRoles()) {
+            if (r.equals(role)) {
+               clients.add(user);
+               break;
+            }
+         }
+      }
+      return clients;
    }
 }

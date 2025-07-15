@@ -105,14 +105,14 @@
                     <label>Дата</label>
                     <input th:field="*{ccExpiration}">
                     <span style="color: red;" th:if="${#fields.hasErrors('ccExpiration')}">
-                        Введите дату с карты
+                        Формат MM/YY
                     </span>
                 </p>
 
                 <p>
                     <label>CVV</label>
                     <input th:field="*{ccCVV}">
-                    <span style="color: red;" th:if="${#fields.hasErrors('ccCVV')}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('ccCVV')}" >
                         Введите CVV
                     </span>
                 </p>

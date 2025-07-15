@@ -15,12 +15,14 @@
         <a th:href="@{/admin/clients}">Список клиентов</a>
         <a th:href="@{/admin/employees}">Список сотрудников</a>
 
+
+
         <div>
             <form action="#" th:action="@{/admin/add/employee}" method="post" th:object="${user}">
                 <p>
                     <label>Имя</label>
                     <input th:field="*{firstName}">
-                    <span style="color: red;" th:if="${#fields.hasErrors('firstName')}">
+                    <span style="color: red;" th:if="${#fields.hasErrors('firstName')}" >
                         Введите имя
                     </span>
                 </p>

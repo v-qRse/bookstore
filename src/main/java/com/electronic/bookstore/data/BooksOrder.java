@@ -40,11 +40,12 @@ public class BooksOrder {
    private String deliveryZip;
 
    //TODO мб отдельная бд, привязанная к аккаунту
-   @CreditCardNumber(message="Not a valid credit card number")
+//   @CreditCardNumber(message="Not a valid credit card number")
+   //TODO пока так
+   @Digits(integer = 16, fraction=0, message="Not a valid credit card number")
    private String ccNumber;
 
-   @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$",
-           message="Must be formatted MM/YY")
+   @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
    private String ccExpiration;
 
    @Column(name = "cc_cvv")

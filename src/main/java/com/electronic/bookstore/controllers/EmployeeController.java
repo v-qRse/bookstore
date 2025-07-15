@@ -14,7 +14,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/employee")
-@SessionAttributes(value = "genres")
 public class EmployeeController {
    @Autowired
    private BooksRepository booksRepository;
@@ -33,18 +32,18 @@ public class EmployeeController {
 
    @GetMapping
    public String employeePage() {
-      return "employeePage";
+      return "/employee/employeePage";
    }
 
    @GetMapping("/add-book")
    public String bookDesign() {
-      return "bookDesign";
+      return "/employee/bookDesign";
    }
 
    @PostMapping("/add-book")
    public String saveBook(@Valid Book book, Errors errors) {
       if (errors.hasErrors()) {
-         return "bookDesign";
+         return "/employee/bookDesign";
       }
       booksRepository.save(book);
       return "redirect:/";
