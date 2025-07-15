@@ -7,6 +7,7 @@ import com.electronic.bookstore.repositories.OrdersRepository;
 import com.electronic.bookstore.repositories.BooksOnOrderRepository;
 import com.electronic.bookstore.repositories.BooksRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -65,12 +66,16 @@ public class MainController {
    }
 
    //TODO не работает
+   //@Transactional
    @PostMapping("/cart")
-   public String createOrder(@Valid BooksOrder booksOrder,
-                             SessionStatus sessionStatus, Errors errors)
+   public String createOrder(@Valid BooksOrder booksOrder, Errors errors,
+                             SessionStatus sessionStatus)
    {
       if (errors.hasErrors()) {
          return "cartPage";
+      }
+      for(BookOnOrder book: booksOrder.getBooks()) {
+         booksOnOrderRepository.save(book);
       }
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
