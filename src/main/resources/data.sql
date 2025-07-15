@@ -1,4 +1,6 @@
 delete from Book;
+delete from Books_Order;
+delete from Book_On_Order;
 
 delete from Genre;
 insert into Genre (id, name, type) values ('NONE', 'Without genre', 'NONE');

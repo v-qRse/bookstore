@@ -1,21 +1,77 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-</head>
+    <head>
+    </head>
 
-<body>
-<h1>
-    Book
-</h1>
+    <body>
+        <h1>
+            Book
+        </h1>
 
-<div>
-    <span th:text="${book.name}">
-    </span>
-    <span th:text="${book.id}">
-    </span>
-    <span th:text="${book.ISBN}">
-    </span>
-</div>
-</body>
+        <a th:href="@{/}">Домашняя страница</a>
+
+        <div th:object="${book}">
+            <p>
+                Ид: <span th:text="*{id}"></span>
+            </p>
+            <p>
+                Автор: <span th:text="*{author}"></span>
+            </p>
+            <p>
+                Язык: <span th:text="*{language}"></span>
+            </p>
+            <p>
+                Жанр: <span th:text="*{genre.name}"></span>
+            </p>
+            <p>
+                Описание: <span th:text="*{description}"></span>
+            </p>
+            <p>
+                ISBN: <span th:text="*{ISBN}"></span>
+            </p>
+            <p>
+                Количество страниц: <span th:text="*{pages}"></span>
+            </p>
+            <p>
+                Цена: <span th:text="*{price}"></span>
+            </p>
+            <p>
+                Цена: <span th:text="*{price}"></span>
+            </p>
+
+            <div th:if="*{quantity > 0}">
+                <div th:if="${!booksOrder.containBook(book.id)}">
+                    <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
+                        <button>
+                            Добавление в корзину
+                        </button>
+                    </form>
+                </div>
+
+                <div th:unless="${!booksOrder.containBook(book.id)}">
+                    <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
+                        <button>
+                            +
+                        </button>
+                    </form>
+
+                    <p th:text="${booksOrder.getQuantityById(book.id)}">
+                    </p>
+
+                    <form action="#" th:action="@{/putBookFromOrder(id=*{id})}" method="post">
+                        <button>
+                            -
+                        </button>
+                    </form>
+
+                    <form action="#" th:action="@{/deleteBookFromOrder(id=*{id})}" method="post">
+                        <button>
+                            Удалить из корзины
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

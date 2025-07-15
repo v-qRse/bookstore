@@ -8,9 +8,11 @@ import com.electronic.bookstore.repositories.BooksOnOrderRepository;
 import com.electronic.bookstore.repositories.BooksRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -48,6 +50,16 @@ public class MainController {
       return "home";
    }
 
+   @GetMapping("/book")
+   public String bookPage(@RequestParam("id") Long id, Model model) {
+      Optional<Book> book = booksRepository.findById(id);
+      if (book.isEmpty()) {
+         return "home";
+      }
+      model.addAttribute("book", book.get());
+      return "bookPage";
+   }
+
    @GetMapping("/cart")
    public String order() {
       return "cartPage";
@@ -55,17 +67,22 @@ public class MainController {
 
    @PostMapping("/cart")
    @Transactional
-   public String createOrder(@ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+   public String createOrder(@Valid @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                             Errors errors,
                              SessionStatus sessionStatus)
    {
+      if (errors.hasErrors()) {
+         return "cartPage";
+      }
       //TODO разобраться кто и почему присваивает id
       booksOrder.setId(null);
       ordersRepository.save(booksOrder);
       sessionStatus.setComplete();
-      return "redirect:/";//заменить на список заказов
+      //TODO заменить на список заказов после исправлении ошибки
+      return "redirect:/";
    }
 
-   //TODO можно ли сделать лучше?
+   //TODO как сделать лучше?
    @PostMapping("/addBookToOrder")
    public String addBookToOrder(@RequestParam Long id,
                                 @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
@@ -97,15 +114,5 @@ public class MainController {
    {
       booksOrder.deleteBook(id);
       return "redirect:" + request.getHeader("Referer");
-   }
-
-   @GetMapping("/book")
-   public String bookPage(@RequestParam("id") Long id, Model model) {
-      Optional<Book> book = booksRepository.findById(id);
-      if (book.isEmpty()) {
-         return "home";
-      }
-      model.addAttribute("book", book.get());
-      return "bookPage";
    }
 }

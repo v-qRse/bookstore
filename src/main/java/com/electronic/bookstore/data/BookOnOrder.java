@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookOnOrder {
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
    @ManyToOne
    private Book book;
    private Long quantity;
+
+   //TODO добавить дату
 
    public BookOnOrder(Book book, Long quantity) {
       this.book = book;

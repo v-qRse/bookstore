@@ -9,5 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface BooksOnOrderRepository extends ListCrudRepository<BookOnOrder, Long> {
-   //Optional<BookOnOrder> findByBookId(Book bookId);
 }

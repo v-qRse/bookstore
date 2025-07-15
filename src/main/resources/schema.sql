@@ -1,3 +1,33 @@
+create table if not exists users (
+    id bigint primary key,
+    first_name varchar(50) not null,
+    last_name varchar(50) not null,
+    email varchar(50) not null,
+    password varchar(100) not null
+);
+
+create table if not exists Role (
+    id bigint primary key,
+    name varchar(50) not null
+);
+
+create table if not exists Privilege (
+    id bigint primary key,
+    name varchar(50) not null
+);
+
+create table if not exists users_roles (
+    user_id bigint not null,
+    role_id bigint not null
+);
+
+create table if not exists roles_privileges (
+   role_id bigint not null,
+   privilege_id bigint not null
+);
+
+
+
 create table if not exists Genre (
     id varchar(4) not null,
     name varchar(25) not null,
@@ -9,7 +39,7 @@ create table if not exists Book (
     name varchar(50) not null,
     author varchar(50) not null,
     language varchar(20) not null,
-    genre varchar(4) not null,
+    genre varchar(4) not null,--genre id
     publication_year varchar(4) not null,
     description varchar(100) not null,
     isbn varchar(13),
