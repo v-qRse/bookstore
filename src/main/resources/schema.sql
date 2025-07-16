@@ -2,7 +2,7 @@ create table if not exists users (
     id bigint primary key,
     first_name varchar(50) not null,
     last_name varchar(50) not null,
-    email varchar(50) not null,
+    email varchar(50) not null unique,
     password varchar(100) not null
 );
 
@@ -79,6 +79,7 @@ create table if not exists orders_books_on_order (
 
 
 create table if not exists users_orders (
+    id bigint primary key,
     user_id bigint not null,
     order_id bigint not null unique
 );

@@ -94,7 +94,6 @@ public class MainController {
                              SessionStatus sessionStatus)
    {
       if (errors.hasErrors()) {
-         System.out.println(errors.getAllErrors());
          return "cartPage";
       }
       User user = usersRepository.findByEmail(userDetails.getUsername());

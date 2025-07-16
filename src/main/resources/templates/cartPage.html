@@ -54,7 +54,7 @@
             <form action="#" th:action="@{/cart}" method="post" th:object="${booksOrder}">
                 <p>
                     <label>Название</label>
-                    <input th:field="*{deliveryName}">
+                    <input th:field="*{deliveryName}" th:value="*{deliveryName}">
                     <span style="color: red;" th:if="${#fields.hasErrors('deliveryName')}">
                         Введите
                     </span>
@@ -62,7 +62,7 @@
 
                 <p>
                     <label>Улица</label>
-                    <input th:field="*{deliveryStreet}">
+                    <input th:field="*{deliveryStreet}" th:value="*{deliveryStreet}">
                     <span style="color: red;" th:if="${#fields.hasErrors('deliveryStreet')}">
                         Введите улицу
                     </span>
@@ -70,7 +70,7 @@
 
                 <p>
                     <label>Город</label>
-                    <input th:field="*{deliveryCity}">
+                    <input th:field="*{deliveryCity}" th:value="*{deliveryCity}">
                     <span style="color: red;" th:if="${#fields.hasErrors('deliveryCity')}">
                         Введите город
                     </span>
@@ -78,7 +78,7 @@
 
                 <p>
                     <label>Область</label>
-                    <input th:field="*{deliveryState}">
+                    <input th:field="*{deliveryState}" th:value="*{deliveryState}">
                     <span style="color: red;" th:if="${#fields.hasErrors('deliveryState')}">
                         Введите область
                     </span>
@@ -86,7 +86,7 @@
 
                 <p>
                     <label>Почтовый индекс</label>
-                    <input th:field="*{deliveryZip}">
+                    <input th:field="*{deliveryZip}" th:value="*{deliveryZip}">
                     <span style="color: red;" th:if="${#fields.hasErrors('deliveryZip')}">
                         Введите почтовый индекс
                     </span>
@@ -95,7 +95,7 @@
 
                 <p>
                     <label>Номер карты</label>
-                    <input th:field="*{ccNumber}">
+                    <input th:field="*{ccNumber}" th:value="*{ccNumber}">
                     <span style="color: red;" th:if="${#fields.hasErrors('ccNumber')}">
                         Введите номер карты
                     </span>
@@ -103,7 +103,7 @@
 
                 <p>
                     <label>Дата</label>
-                    <input th:field="*{ccExpiration}">
+                    <input th:field="*{ccExpiration}"  th:value="*{ccExpiration}">
                     <span style="color: red;" th:if="${#fields.hasErrors('ccExpiration')}">
                         Формат MM/YY
                     </span>
@@ -111,7 +111,7 @@
 
                 <p>
                     <label>CVV</label>
-                    <input th:field="*{ccCVV}">
+                    <input th:field="*{ccCVV}" th:value="*{ccCVV}">
                     <span style="color: red;" th:if="${#fields.hasErrors('ccCVV')}" >
                         Введите CVV
                     </span>
