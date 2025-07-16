@@ -40,8 +40,8 @@ public class SecurityComponent {
 
    @Bean
    public SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
-      String[] openPaths = {"/", "/book", "/register"};
-      String[] userPaths = {"/addBookToOrder", "/putBookFromOrder", "/deleteBookFromOrder", "/cart" , "/shopping-history"};
+      String[] openPaths = {"/book", "/register", "/addBookToOrder", "/putBookFromOrder", "/deleteBookFromOrder", "/"};
+      String[] userPaths = {"/cart" , "/shopping-history"};
       String[] employeePaths = {"/employee", "/employee/**"};
       String[] adminPaths = {"/admin", "/admin/**"};
       return http
@@ -49,11 +49,11 @@ public class SecurityComponent {
               .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
               .authorizeHttpRequests((authorizeRequests) ->
                       authorizeRequests
-                              .requestMatchers(adminPaths).hasRole("ADMIN")
-                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
-                              .requestMatchers(userPaths).hasRole("USER")
                               .requestMatchers(openPaths).permitAll()
-                              .requestMatchers("/h2-console").permitAll().anyRequest().authenticated()
+                              .requestMatchers("/h2-console/**").permitAll()
+                              .requestMatchers(userPaths).hasRole("USER")
+                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
+                              .requestMatchers(adminPaths).hasRole("ADMIN")
               )
               .formLogin(withDefaults())
               .logout(withDefaults())

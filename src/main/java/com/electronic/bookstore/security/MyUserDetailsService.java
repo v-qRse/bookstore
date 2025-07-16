@@ -1,5 +1,8 @@
 package com.electronic.bookstore.security;
 
+import com.electronic.bookstore.security.data.Privilege;
+import com.electronic.bookstore.security.data.Role;
+import com.electronic.bookstore.security.data.User;
 import com.electronic.bookstore.security.repositories.RolesRepository;
 import com.electronic.bookstore.security.repositories.UsersRepository;
 import jakarta.transaction.Transactional;

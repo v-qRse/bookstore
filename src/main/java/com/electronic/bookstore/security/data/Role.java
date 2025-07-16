@@ -1,8 +1,7 @@
-package com.electronic.bookstore.security;
+package com.electronic.bookstore.security.data;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;

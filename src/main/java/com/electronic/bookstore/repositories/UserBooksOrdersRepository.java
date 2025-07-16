@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserBooksOrdersRepository extends ListCrudRepository<UserBooksOrder, Long> {
+   public boolean existsByOrderId(Long orderId);
 }

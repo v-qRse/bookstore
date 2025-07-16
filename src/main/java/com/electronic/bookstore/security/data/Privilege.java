@@ -1,4 +1,4 @@
-package com.electronic.bookstore.security;
+package com.electronic.bookstore.security.data;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

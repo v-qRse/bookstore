@@ -10,6 +10,11 @@
             Book design
         </h1>
 
+        <div>
+            <a th:href="@{/}">Домашняя страница</a>
+            <a th:href="@{/employee}">Страница сотрудника</a>
+        </div>
+
         <form action="#" th:action="@{/employee/add-book}" method="post" th:object="${book}">
             <p>
                 <label>Название книги</label>

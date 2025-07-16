@@ -1,4 +1,4 @@
-package com.electronic.bookstore.security;
+package com.electronic.bookstore.security.data;
 
 import com.electronic.bookstore.data.BooksOrder;
 import jakarta.persistence.*;
@@ -24,6 +24,7 @@ public class User {
    private String lastName;
 
    @NotBlank(message = "Введите email")
+   @Column(unique=true)
    private String email;
 
    @NotBlank(message = "Введите пароль")

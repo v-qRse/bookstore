@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Register
+        </h1>
+
+        <div>
+            <a th:href="@{/}">Домашняя страница</a>
+        </div>
+
+        <form action="#" th:action="@{/register}" method="post" th:object="${user}">
+            <p>
+                <label>Имя</label>
+                <input th:field="*{firstName}">
+                <span style="color: red;" th:if="${#fields.hasErrors('firstName')}" >
+                        Введите имя
+                </span>
+            </p>
+
+            <p>
+                <label>Фамилия</label>
+                <input th:field="*{lastName}">
+                <span style="color: red;" th:if="${#fields.hasErrors('lastName')}">
+                        Введите фамилию
+                    </span>
+            </p>
+
+            <p>
+                <label>email</label>
+                <input th:field="*{email}">
+                <span style="color: red;" th:if="${#fields.hasErrors('email')}">
+                        Введите email, должен быть уникальным
+                    </span>
+            </p>
+
+            <p>
+                <label>Пароль</label>
+                <input th:field="*{password}">
+                <span style="color: red;" th:if="${#fields.hasErrors('password')}">
+                        Введите пароль
+                    </span>
+            </p>
+
+            <button>
+                Создать
+            </button>
+        </form>
+    </body>
+</html>

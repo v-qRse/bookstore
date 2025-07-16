@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <head>
     </head>
 
@@ -9,7 +10,16 @@
             Home
         </h1>
 
-        <a th:if="${!booksOrder.books.isEmpty()}" th:href="@{/cart}">Заказ</a>
+        <div>
+            <p>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Войти</a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Выйти</a>
+
+                <a th:href="@{/register}">Регистрация</a>
+            </p>
+            <a th:if="${!booksOrder.books.isEmpty()}" th:href="@{/cart}">Заказ</a>
+        </div>
+
 
         <div>
             <div th:each="b : ${books}" style="border: 2px solid black">

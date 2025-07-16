@@ -9,10 +9,13 @@
         <h1>
             Employees list
         </h1>
-        <a th:href="@{/}">Домашняя страница</a>
-        <a th:href="@{/admin}">Страница администраторов</a>
-        <a th:href="@{/admin/clients}">Список клиентов</a>
-        <a th:href="@{/admin/add/employee}">Создать сотрудника</a>
+
+        <div>
+            <a th:href="@{/}">Домашняя страница</a>
+            <a th:href="@{/admin}">Страница администраторов</a>
+            <a th:href="@{/admin/clients}">Список клиентов</a>
+            <a th:href="@{/admin/add/employee}">Создать сотрудника</a>
+        </div>
 
         <form action="#" th:action="@{/admin/employees}" method="get" th:object="${request}">
             <input name="request" id="request" th:value="${request}">

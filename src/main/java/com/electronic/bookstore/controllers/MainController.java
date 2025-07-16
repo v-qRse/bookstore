@@ -8,7 +8,7 @@ import com.electronic.bookstore.repositories.OrdersRepository;
 import com.electronic.bookstore.repositories.BooksOnOrderRepository;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.UserBooksOrdersRepository;
-import com.electronic.bookstore.security.User;
+import com.electronic.bookstore.security.data.User;
 import com.electronic.bookstore.security.repositories.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -72,8 +72,18 @@ public class MainController {
       return "bookPage";
    }
 
+   //TODO закомментированная попытка сделать изменение заказа
    @GetMapping("/cart")
-   public String order() {
+   public String order()//@RequestParam(value = "id", required = false) Long id,
+                       //Model model)
+   {
+//      if (id != null) {
+//         Optional<BooksOrder> order = ordersRepository.findById(id);
+//         if (order.isPresent()) {
+//            ordersRepository.deleteById(id);
+//            model.addAttribute("booksOrder", order.get());
+//         }
+//      }
       return "cartPage";
    }
 

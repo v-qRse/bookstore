@@ -1,6 +1,6 @@
 package com.electronic.bookstore.data;
 
-import com.electronic.bookstore.security.User;
+import com.electronic.bookstore.security.data.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.CreditCardNumber;
 
 import java.util.ArrayList;
 import java.util.Date;

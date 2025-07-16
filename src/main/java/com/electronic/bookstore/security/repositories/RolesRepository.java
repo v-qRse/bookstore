@@ -1,6 +1,6 @@
 package com.electronic.bookstore.security.repositories;
 
-import com.electronic.bookstore.security.Role;
+import com.electronic.bookstore.security.data.Role;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 

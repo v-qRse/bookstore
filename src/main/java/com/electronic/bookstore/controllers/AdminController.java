@@ -1,7 +1,7 @@
 package com.electronic.bookstore.controllers;
 
-import com.electronic.bookstore.security.Role;
-import com.electronic.bookstore.security.User;
+import com.electronic.bookstore.security.data.Role;
+import com.electronic.bookstore.security.data.User;
 import com.electronic.bookstore.security.repositories.RolesRepository;
 import com.electronic.bookstore.security.repositories.UsersRepository;
 import jakarta.validation.Valid;

@@ -10,7 +10,9 @@
             Shopping history
         </h1>
 
-        <a th:href="@{/}">Домашняя страница</a>
+        <div>
+            <a th:href="@{/}">Домашняя страница</a>
+        </div>
 
         <div>
             <p>Заказы</p>
@@ -21,6 +23,7 @@
                     <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}"></a>
                     <p>Количество <span th:text="${b.quantity}"></span></p>
                 </div>
+<!--                <a th:href="@{/cart(id=${order.id})}">Изменить</a>-->
             </div>
         </div>
     </body>
