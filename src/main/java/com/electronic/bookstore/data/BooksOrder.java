@@ -1,5 +1,6 @@
 package com.electronic.bookstore.data;
 
+import com.electronic.bookstore.security.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +23,7 @@ public class BooksOrder {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
+   //TODO сделать статус
    //private Status status;
 
    //TODO мб отдельная бд, привязанная к аккаунту
@@ -52,7 +55,10 @@ public class BooksOrder {
    @Digits(integer=3, fraction=0, message="Invalid CVV")
    private String ccCVV;
 
-   //TODO добавить дату
+   private Date createdAt;
+
+   @ManyToOne
+   private User user;
 
    @OneToMany(cascade = CascadeType.ALL)
    @JoinTable(name = "orders_books_on_order",

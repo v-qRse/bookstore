@@ -16,6 +16,7 @@ public class Role {
    private Long id;
 
    private String name;
+
    @ManyToMany(mappedBy = "roles")
    private Collection<User> users;
 
@@ -25,7 +26,8 @@ public class Role {
            joinColumns = @JoinColumn(
                    name = "role_id", referencedColumnName = "id"),
            inverseJoinColumns = @JoinColumn(
-                   name = "privilege_id", referencedColumnName = "id"))
+                   name = "privilege_id", referencedColumnName = "id")
+   )
    private Collection<Privilege> privileges;
 
    public Role(String name) {

@@ -40,7 +40,6 @@ public class SetupSecurityDataLoader implements
       Privilege createEmpPrivilege = createPrivilegeIfNotFound("CREATE_EMPLOYEE_PRIVILEGE");
       Privilege createBookPrivilege = createPrivilegeIfNotFound("CREATE_BOOK_PRIVILEGE");
       Privilege cartPrivilege = createPrivilegeIfNotFound("CART_PRIVILEGE");
-      //Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
       createRoleIfNotFound("ROLE_ADMIN", Arrays.asList(createEmpPrivilege));
       createRoleIfNotFound("ROLE_EMPLOYEE", Arrays.asList(createBookPrivilege));

@@ -1,6 +1,5 @@
 package com.electronic.bookstore.security;
 
-import com.electronic.bookstore.security.repositories.PrivilegesRepository;
 import com.electronic.bookstore.security.repositories.RolesRepository;
 import com.electronic.bookstore.security.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
@@ -10,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

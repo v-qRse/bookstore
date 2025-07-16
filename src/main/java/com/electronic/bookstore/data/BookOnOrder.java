@@ -18,8 +18,6 @@ public class BookOnOrder {
    private Book book;
    private Long quantity;
 
-   //TODO добавить дату
-
    public BookOnOrder(Book book, Long quantity) {
       this.book = book;
       this.quantity = quantity;

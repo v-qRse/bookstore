@@ -1,18 +1,18 @@
 package com.electronic.bookstore.security;
 
+import com.electronic.bookstore.data.BooksOrder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity(name = "users")
 @RequiredArgsConstructor
-public class User{
+public class User {
    @Id
    @GeneratedValue(strategy= GenerationType.AUTO)
    private Long id;
@@ -35,6 +35,16 @@ public class User{
            joinColumns = @JoinColumn(
                    name = "user_id", referencedColumnName = "id"),
            inverseJoinColumns = @JoinColumn(
-                   name = "role_id", referencedColumnName = "id"))
+                   name = "role_id", referencedColumnName = "id")
+   )
    private Collection<Role> roles;
+
+   @OneToMany(cascade = CascadeType.ALL)
+   @JoinTable(
+           joinColumns = @JoinColumn(
+                   name = "userId", referencedColumnName = "id"),
+           inverseJoinColumns = @JoinColumn(
+                   name = "orderId", referencedColumnName = "id")
+   )
+   private List<BooksOrder> orders;
 }

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -43,13 +44,16 @@ public class SecurityComponent {
       String[] userPaths = {"/addBookToOrder", "/putBookFromOrder", "/deleteBookFromOrder", "/cart" , "/shopping-history"};
       String[] employeePaths = {"/employee", "/employee/**"};
       String[] adminPaths = {"/admin", "/admin/**"};
-      return http.
-              authorizeHttpRequests((authorizeRequests) ->
-                      authorizeRequests.requestMatchers("/**").permitAll()
-//                              .requestMatchers(openPaths).permitAll()
-//                              .requestMatchers(userPaths).hasRole("USER")
-//                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
-//                              .requestMatchers(adminPaths).hasRole("ADMIN")
+      return http
+              .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+              .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+              .authorizeHttpRequests((authorizeRequests) ->
+                      authorizeRequests
+                              .requestMatchers(adminPaths).hasRole("ADMIN")
+                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
+                              .requestMatchers(userPaths).hasRole("USER")
+                              .requestMatchers(openPaths).permitAll()
+                              .requestMatchers("/h2-console").permitAll().anyRequest().authenticated()
               )
               .formLogin(withDefaults())
               .logout(withDefaults())

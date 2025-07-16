@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            Shopping history
+        </h1>
+
+        <a th:href="@{/}">Домашняя страница</a>
+
+        <div>
+            <p>Заказы</p>
+
+            <div th:each="order: ${orders}" style="border: 2px solid black">
+                <p>ID заказа <span th:text="${order.id}"></span></p>
+                <div th:each="b: ${order.books}" style="border: 2px solid gray">
+                    <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}"></a>
+                    <p>Количество <span th:text="${b.quantity}"></span></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

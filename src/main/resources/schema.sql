@@ -17,7 +17,7 @@ create table if not exists Privilege (
 );
 
 create table if not exists users_roles (
-    user_id bigint not null,
+    user_id bigint not null unique,
     role_id bigint not null
 );
 
@@ -60,7 +60,9 @@ create table if not exists Books_Order (
    delivery_zip varchar(10) not null,
    cc_number varchar(16) not null,
    cc_expiration varchar(5) not null,
-   cc_cvv varchar(3) not null
+   cc_cvv varchar(3) not null,
+   created_at timestamp not null
+--   user_id bigint not null
 );
 
 create table if not exists Book_On_Order (
@@ -71,5 +73,12 @@ create table if not exists Book_On_Order (
 
 create table if not exists orders_books_on_order (
     order_id bigint not null,
-    book_on_order_id bigint not null
+    book_on_order_id bigint not null unique
+);
+
+
+
+create table if not exists users_orders (
+    user_id bigint not null,
+    order_id bigint not null unique
 );
