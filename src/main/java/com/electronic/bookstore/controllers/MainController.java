@@ -22,9 +22,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/")
@@ -96,12 +94,46 @@ public class MainController {
       return "shoppingHistoryPage";
    }
 
+   //TODO как сделать лучше?
+   @PostMapping("/addBookToOrder")
+   public String addBookToOrder(@RequestParam("id") Long id,
+                                @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                                HttpServletRequest request)
+   {
+      Optional<Book> book = booksRepository.findById(id);
+      if (book.isPresent()) {
+         booksOrder.addBook(new BookOnOrder(book.get(), 1L));
+      }
+      return "redirect:" + request.getHeader("Referer");
+   }
+
+   @PostMapping("/putBookFromOrder")
+   public String putBookFromOrder(@RequestParam("id") Long id,
+                                  @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                                  HttpServletRequest request)
+   {
+      Optional<Book> book = booksRepository.findById(id);
+      if (book.isPresent()) {
+         booksOrder.addBook(new BookOnOrder(book.get(), -1L));
+      }
+      return "redirect:" + request.getHeader("Referer");
+   }
+
+   @DeleteMapping("/deleteBookFromOrder")
+   public String deleteBookFromOrder(@RequestParam("id") Long id,
+                                     @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                                     HttpServletRequest request)
+   {
+      booksOrder.deleteBook(id);
+      return "redirect:" + request.getHeader("Referer");
+   }
+
    @PostMapping("/cart")
    @Transactional
-   public String createOrder(@Valid @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                             Errors errors,
-                             @AuthenticationPrincipal UserDetails userDetails,
-                             SessionStatus sessionStatus)
+   public String saveOrder(@Valid @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+                           Errors errors,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           SessionStatus sessionStatus)
    {
       if (errors.hasErrors()) {
          return "cartPage";
@@ -119,37 +151,33 @@ public class MainController {
       return "redirect:/shopping-history";
    }
 
-   //TODO как сделать лучше?
-   @PostMapping("/addBookToOrder")
-   public String addBookToOrder(@RequestParam Long id,
-                                @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                                HttpServletRequest request)
-   {
-      Optional<Book> book = booksRepository.findById(id);
-      if (book.isPresent()) {
-         booksOrder.addBook(new BookOnOrder(book.get(), 1L));
-      }
-      return "redirect:" + request.getHeader("Referer");
-   }
+   //TODO подумать о кнопкe очищения заказа
+   // мб сделать через deleteOrder() с проверкой на то сохранен заказ или нет
 
-   @PostMapping("/putBookFromOrder")
-   public String putBookFromOrder(@RequestParam Long id,
-                                  @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                                  HttpServletRequest request)
-   {
-      Optional<Book> book = booksRepository.findById(id);
-      if (book.isPresent()) {
-         booksOrder.addBook(new BookOnOrder(book.get(), -1L));
-      }
-      return "redirect:" + request.getHeader("Referer");
-   }
 
-   @PostMapping("/deleteBookFromOrder")
-   public String deleteBookFromOrder(@RequestParam("id") Long id,
-                                     @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
-                                     HttpServletRequest request)
-   {
-      booksOrder.deleteBook(id);
-      return "redirect:" + request.getHeader("Referer");
+   //TODO
+   @DeleteMapping("/deleteCart")
+   @Transactional
+   public String deleteOrder(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+      //TODO сделать проверку на статус заказа
+      // если ещё не оплачет и не получен, то можно удалять, иначе нельзя
+      if (ordersRepository.existsById(id)) {
+         Optional<UserBooksOrder> userBooksOrder = userBooksOrdersRepository.findByOrderId(id);
+         if (userBooksOrder.isPresent()) {
+            User user = usersRepository.findByEmail(userDetails.getUsername());
+            if (Objects.equals(userBooksOrder.get().getUserId(), user.getId())) {
+               userBooksOrdersRepository.deleteByOrderId(id);
+               ordersRepository.deleteById(id);
+            } else {
+               System.out.println("ошибка удаления заказа: текущий пользователь и пользователь заказа различны");
+               return "redirect:/";
+            }
+         } else {
+            System.out.println("ошибка сохранения заказа: заказ сохранен, но не привязан к пользователю");
+         }
+      } else {
+         System.out.println("попытка удаления не сохраненного заказа");
+      }
+      return "redirect:/shopping-history";
    }
 }

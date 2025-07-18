@@ -24,6 +24,11 @@
                     <p>Количество <span th:text="${b.quantity}"></span></p>
                 </div>
 <!--                <a th:href="@{/cart(id=${order.id})}">Изменить</a>-->
+                <form action="#" th:action="@{/deleteCart(id=${order.id})}" th:method="delete">
+                    <button>
+                        Удалить заказ
+                    </button>
+                </form>
             </div>
         </div>
     </body>

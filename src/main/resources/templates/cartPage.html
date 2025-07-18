@@ -38,7 +38,7 @@
                         </button>
                     </form>
 
-                    <form action="#" th:action="@{/deleteBookFromOrder(id=${b.book.id})}" method="post">
+                    <form action="#" th:action="@{/deleteBookFromOrder(id=${b.book.id})}" th:method="delete">
                         <button>
                             Удалить из корзины
                         </button>

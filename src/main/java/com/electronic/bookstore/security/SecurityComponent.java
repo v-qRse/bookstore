@@ -1,6 +1,7 @@
 package com.electronic.bookstore.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,24 +21,6 @@ public class SecurityComponent {
       return new BCryptPasswordEncoder();
    }
 
-   //TODO добавлять иерархию?
-   /*
-   @Bean
-   public RoleHierarchy roleHierarchy() {
-      RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-      String hierarchy = "ROLE_ADMIN > ROLE_EMPLOYEE \n ROLE_EMPLOYEE > ROLE_USER";
-      roleHierarchy.setHierarchy(hierarchy);
-      return roleHierarchy;
-   }
-
-   @Bean
-   public DefaultWebSecurityExpressionHandler customWebSecurityExpressionHandler() {
-      DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-      expressionHandler.setRoleHierarchy(roleHierarchy());
-      return expressionHandler;
-   }
-   */
-
    @Bean
    public SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
       String[] openPaths = {"/book", "/register", "/addBookToOrder", "/putBookFromOrder", "/deleteBookFromOrder", "/"};
@@ -47,14 +30,18 @@ public class SecurityComponent {
       return http
               .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
               .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-              .authorizeHttpRequests((authorizeRequests) ->
-                      authorizeRequests
-                              .requestMatchers(openPaths).permitAll()
-                              .requestMatchers("/h2-console/**").permitAll()
-                              .requestMatchers(userPaths).hasRole("USER")
-                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
-                              .requestMatchers(adminPaths).hasRole("ADMIN")
-              )
+              .authorizeHttpRequests((authorizeRequests) -> authorizeRequests.anyRequest()
+                      .authenticated())
+              //TODO настроить фильтп авторизации
+//              .authorizeHttpRequests((authorizeRequests) ->
+//                      authorizeRequests
+//                              .requestMatchers(openPaths).permitAll()
+//                              .requestMatchers("/h2-console/**", "/deleteCart").permitAll()
+//                              //.requestMatchers(HttpMethod.POST, , "/cart").hasRole("USER")
+//                              .requestMatchers(userPaths).hasRole("USER")
+//                              .requestMatchers(employeePaths).hasRole("EMPLOYEE")
+//                              .requestMatchers(adminPaths).hasRole("ADMIN")
+//              )
               .formLogin(withDefaults())
               .logout(withDefaults())
               .build();
