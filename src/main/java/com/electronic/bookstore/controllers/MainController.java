@@ -64,7 +64,7 @@ public class MainController {
    public String bookPage(@RequestParam("id") Long id, Model model) {
       Optional<Book> book = booksRepository.findById(id);
       if (book.isEmpty()) {
-         return "home";
+         return "redirect:/";
       }
       model.addAttribute("book", book.get());
       return "bookPage";
@@ -72,18 +72,38 @@ public class MainController {
 
    //TODO закомментированная попытка сделать изменение заказа
    @GetMapping("/cart")
-   public String order()//@RequestParam(value = "id", required = false) Long id,
-                       //Model model)
-   {
-//      if (id != null) {
-//         Optional<BooksOrder> order = ordersRepository.findById(id);
-//         if (order.isPresent()) {
-//            ordersRepository.deleteById(id);
-//            model.addAttribute("booksOrder", order.get());
-//         }
-//      }
+   public String order() {
       return "cartPage";
    }
+
+   //TODO рассмотреть RedirectView и другие альтернативы вместо String
+//   @GetMapping("/changeCart")
+//   @Transactional
+//   public String changeOrder(@RequestParam("id") Long id,
+//                             @AuthenticationPrincipal UserDetails userDetails,
+//                             Model model)
+//   {
+//      if (ordersRepository.existsById(id)) {
+//         Optional<UserBooksOrder> userBooksOrder = userBooksOrdersRepository.findByOrderId(id);
+//         if (userBooksOrder.isPresent()) {
+//            User user = usersRepository.findByEmail(userDetails.getUsername());
+//            if (Objects.equals(userBooksOrder.get().getUserId(), user.getId())) {
+////               userBooksOrdersRepository.deleteByOrderId(id);
+////               ordersRepository.deleteById(id);
+//               BooksOrder order = ordersRepository.findById(id).get();
+//               model.addAttribute("booksOrder", order);
+//            } else {
+//               System.out.println("ошибка удаления заказа: текущий пользователь и пользователь заказа различны");
+//               return "redirect:/";
+//            }
+//         } else {
+//            System.out.println("ошибка сохранения заказа: заказ сохранен, но не привязан к пользователю");
+//         }
+//      } else {
+//         System.out.println("попытка удаления не сохраненного заказа");
+//      }
+//      return "cartPage";
+//   }
 
    @GetMapping("/shopping-history")
    public String shoppingHistoryPage(@AuthenticationPrincipal UserDetails userDetails,
@@ -96,11 +116,12 @@ public class MainController {
 
    //TODO как сделать лучше?
    @PostMapping("/addBookToOrder")
-   public String addBookToOrder(@RequestParam("id") Long id,
-                                @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+   public String addBookToOrder(@RequestParam("id") Long bookId,
+                                Model model,
                                 HttpServletRequest request)
    {
-      Optional<Book> book = booksRepository.findById(id);
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      Optional<Book> book = booksRepository.findById(bookId);
       if (book.isPresent()) {
          booksOrder.addBook(new BookOnOrder(book.get(), 1L));
       }
@@ -108,11 +129,12 @@ public class MainController {
    }
 
    @PostMapping("/putBookFromOrder")
-   public String putBookFromOrder(@RequestParam("id") Long id,
-                                  @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+   public String putBookFromOrder(@RequestParam("id") Long bookId,
+                                  Model model,
                                   HttpServletRequest request)
    {
-      Optional<Book> book = booksRepository.findById(id);
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      Optional<Book> book = booksRepository.findById(bookId);
       if (book.isPresent()) {
          booksOrder.addBook(new BookOnOrder(book.get(), -1L));
       }
@@ -120,11 +142,12 @@ public class MainController {
    }
 
    @DeleteMapping("/deleteBookFromOrder")
-   public String deleteBookFromOrder(@RequestParam("id") Long id,
-                                     @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+   public String deleteBookFromOrder(@RequestParam("id") Long bookId,
+                                     Model model,
                                      HttpServletRequest request)
    {
-      booksOrder.deleteBook(id);
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      booksOrder.deleteBook(bookId);
       return "redirect:" + request.getHeader("Referer");
    }
 
@@ -140,9 +163,8 @@ public class MainController {
       }
       User user = usersRepository.findByEmail(userDetails.getUsername());
 
+      booksOrder.setUser(user);
       booksOrder.setCreatedAt(new Date());
-      //TODO разобраться кто и почему присваивает id
-      booksOrder.setId(null);
       ordersRepository.save(booksOrder);
 
       UserBooksOrder userBooksOrder = new UserBooksOrder(user.getId(), booksOrder.getId());
@@ -158,7 +180,9 @@ public class MainController {
    //TODO
    @DeleteMapping("/deleteCart")
    @Transactional
-   public String deleteOrder(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+   public String deleteOrder(@RequestParam("id") Long id,
+                             @AuthenticationPrincipal UserDetails userDetails)
+   {
       //TODO сделать проверку на статус заказа
       // если ещё не оплачет и не получен, то можно удалять, иначе нельзя
       if (ordersRepository.existsById(id)) {

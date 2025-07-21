@@ -61,8 +61,8 @@ create table if not exists Books_Order (
    cc_number varchar(16) not null,
    cc_expiration varchar(5) not null,
    cc_cvv varchar(3) not null,
-   created_at timestamp not null
---   user_id bigint not null
+   created_at timestamp not null,
+   user_id bigint not null
 );
 
 create table if not exists Book_On_Order (
