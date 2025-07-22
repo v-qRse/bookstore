@@ -1,13 +1,7 @@
 package com.electronic.bookstore.controllers;
 
-import com.electronic.bookstore.data.Book;
-import com.electronic.bookstore.data.BookOnOrder;
-import com.electronic.bookstore.data.BooksOrder;
-import com.electronic.bookstore.data.UserBooksOrder;
-import com.electronic.bookstore.repositories.OrdersRepository;
-import com.electronic.bookstore.repositories.BooksOnOrderRepository;
-import com.electronic.bookstore.repositories.BooksRepository;
-import com.electronic.bookstore.repositories.UserBooksOrdersRepository;
+import com.electronic.bookstore.data.*;
+import com.electronic.bookstore.repositories.*;
 import com.electronic.bookstore.security.data.User;
 import com.electronic.bookstore.security.repositories.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,12 +9,14 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
@@ -28,7 +24,6 @@ import java.util.*;
 @RequestMapping("/")
 @SessionAttributes(value = "booksOrder")
 public class MainController {
-   //TODO переделать в несколько контроллеров?
    @Autowired
    private BooksRepository booksRepository;
    @Autowired
@@ -39,6 +34,8 @@ public class MainController {
    private UsersRepository usersRepository;
    @Autowired
    private UserBooksOrdersRepository userBooksOrdersRepository;
+   @Autowired
+   private StatusesRepository statusesRepository;
 
    @ModelAttribute(name = "books")
    public List<Book> books() {
@@ -50,9 +47,14 @@ public class MainController {
       return new BookOnOrder();
    }
 
+   //TODO не нравиться реализация статуса заказа
    @ModelAttribute(name = "booksOrder")
+   @Transactional
    public BooksOrder booksOrder() {
-      return new BooksOrder();
+      BooksOrder booksOrder = new BooksOrder();
+      Status status = statusesRepository.findById("CRTD").get();
+      booksOrder.setStatus(status);
+      return booksOrder;
    }
 
    @GetMapping
@@ -70,40 +72,26 @@ public class MainController {
       return "bookPage";
    }
 
-   //TODO закомментированная попытка сделать изменение заказа
+   //TODO сделать обновление заказа
+   // заказ обновляется, но не с страницы /cart?id="cartId",
+   // так как при обращении к изменению, он изменяется и пересылается на ту же страницу и
+   // запрашивает заказ из бд снова
    @GetMapping("/cart")
-   public String order() {
+   public String order(@RequestParam(value = "id", required = false) Long id,
+                       @AuthenticationPrincipal UserDetails userDetails,
+                       Model model)
+   {
+      if (id != null) {
+         Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
+         if (booksOrder.isPresent()) {
+            BooksOrder order = booksOrder.get();
+            if (Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
+               model.addAttribute("booksOrder", order);
+            }
+         }
+      }
       return "cartPage";
    }
-
-   //TODO рассмотреть RedirectView и другие альтернативы вместо String
-//   @GetMapping("/changeCart")
-//   @Transactional
-//   public String changeOrder(@RequestParam("id") Long id,
-//                             @AuthenticationPrincipal UserDetails userDetails,
-//                             Model model)
-//   {
-//      if (ordersRepository.existsById(id)) {
-//         Optional<UserBooksOrder> userBooksOrder = userBooksOrdersRepository.findByOrderId(id);
-//         if (userBooksOrder.isPresent()) {
-//            User user = usersRepository.findByEmail(userDetails.getUsername());
-//            if (Objects.equals(userBooksOrder.get().getUserId(), user.getId())) {
-////               userBooksOrdersRepository.deleteByOrderId(id);
-////               ordersRepository.deleteById(id);
-//               BooksOrder order = ordersRepository.findById(id).get();
-//               model.addAttribute("booksOrder", order);
-//            } else {
-//               System.out.println("ошибка удаления заказа: текущий пользователь и пользователь заказа различны");
-//               return "redirect:/";
-//            }
-//         } else {
-//            System.out.println("ошибка сохранения заказа: заказ сохранен, но не привязан к пользователю");
-//         }
-//      } else {
-//         System.out.println("попытка удаления не сохраненного заказа");
-//      }
-//      return "cartPage";
-//   }
 
    @GetMapping("/shopping-history")
    public String shoppingHistoryPage(@AuthenticationPrincipal UserDetails userDetails,
@@ -162,28 +150,53 @@ public class MainController {
          return "cartPage";
       }
       User user = usersRepository.findByEmail(userDetails.getUsername());
-
       booksOrder.setUser(user);
+      Status status = statusesRepository.findById("SAVD").get();
+      booksOrder.setStatus(status);
       booksOrder.setCreatedAt(new Date());
       ordersRepository.save(booksOrder);
 
-      UserBooksOrder userBooksOrder = new UserBooksOrder(user.getId(), booksOrder.getId());
-      userBooksOrdersRepository.save(userBooksOrder);
+      if (!userBooksOrdersRepository.existsByOrderId(booksOrder.getId())) {
+         UserBooksOrder userBooksOrder = new UserBooksOrder(user.getId(), booksOrder.getId());
+         userBooksOrdersRepository.save(userBooksOrder);
+      }
       sessionStatus.setComplete();
       return "redirect:/shopping-history";
    }
 
-   //TODO подумать о кнопкe очищения заказа
-   // мб сделать через deleteOrder() с проверкой на то сохранен заказ или нет
+   @PostMapping("/paidCart")
+   @Transactional
+   //не потокобезопасно
+   public String paidCart(@RequestParam("id") Long id) {
+      Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
+      if (booksOrder.isPresent()) {
+         BooksOrder order = booksOrder.get();
+         List<Book> books = new ArrayList<>();
+         for (BookOnOrder bookOnOrder: order.getBooks()) {
+            Book book = bookOnOrder.getBook();
+            if (book.getQuantity() >= bookOnOrder.getQuantity()) {
+               book.setQuantity(book.getQuantity() - bookOnOrder.getQuantity());
+               books.add(book);
+            } else {
+               //TODO ошибка запроса
+               return "redirect:/";
+            }
+         }
+         Status status = statusesRepository.findById("CMPL").get();
+         order.setStatus(status);
+         booksRepository.saveAll(books);
+         ordersRepository.save(order);
+      }
+      return "redirect:/shopping-history";
+   }
 
-
-   //TODO
+   //TODO надо сделать лучше, мб сделать проверку как в order()
    @DeleteMapping("/deleteCart")
    @Transactional
    public String deleteOrder(@RequestParam("id") Long id,
                              @AuthenticationPrincipal UserDetails userDetails)
    {
-      //TODO сделать проверку на статус заказа
+      //TODO сделать проверку на статус заказа !!! В ШАБЛОНЕ !!! и тут
       // если ещё не оплачет и не получен, то можно удалять, иначе нельзя
       if (ordersRepository.existsById(id)) {
          Optional<UserBooksOrder> userBooksOrder = userBooksOrdersRepository.findByOrderId(id);

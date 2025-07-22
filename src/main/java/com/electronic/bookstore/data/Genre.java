@@ -1,9 +1,6 @@
 package com.electronic.bookstore.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Data
@@ -15,9 +12,10 @@ public class Genre {
    private String id;
    private String name;
    @Enumerated(EnumType.STRING)
-   private Type type;
+   @Column(name = "type")
+   private GenreType genreType;
 
-   public enum Type {
+   public enum GenreType {
       NONE, FICTION, FANTASY, HORROR, DICTIONARY, ROMANCE;
    }
 }

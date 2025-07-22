@@ -24,13 +24,24 @@
                     <p>Количество <span th:text="${b.quantity}"></span></p>
                 </div>
 
-<!--                <a th:href="@{/changeCart(id=${order.id})}">Изменить заказ</a>-->
+                <div th:if="${order.isCompleted()}">
+                    <p th:text="${order.status.description}"></p>
+                </div>
+                <div th:unless="${order.isCompleted()}">
+                    <a th:href="@{/cart(id=${order.id})}">Изменить заказ</a>
 
-                <form action="#" th:action="@{/deleteCart(id=${order.id})}" th:method="delete">
-                    <button>
-                        Удалить заказ
-                    </button>
-                </form>
+                    <form action="#" th:action="@{/deleteCart(id=${order.id})}" th:method="delete">
+                        <button>
+                            Удалить заказ
+                        </button>
+                    </form>
+
+                    <form action="#" th:action="@{/paidCart(id=${order.id})}" th:method="post">
+                        <button>
+                            Оплатить
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </body>

@@ -17,13 +17,14 @@ import java.util.Objects;
 @Data
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor()
 public class BooksOrder {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
-   //TODO сделать статус
-   //private Status status;
+
+   @ManyToOne
+   private Status status;
 
    //TODO мб отдельная бд, привязанная к аккаунту
    @NotBlank(message="Delivery name is required")
@@ -118,5 +119,9 @@ public class BooksOrder {
          count += bookOnOrder.getQuantity()*bookOnOrder.getBook().getPrice();
       }
       return count;
+   }
+
+   public boolean isCompleted() {
+      return status.getType() == Status.StatusType.COMPLETED;
    }
 }
