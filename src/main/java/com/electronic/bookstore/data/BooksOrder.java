@@ -42,21 +42,18 @@ public class BooksOrder {
    @NotBlank(message="Zip code is required")
    private String deliveryZip;
 
-   //TODO мб отдельная бд, привязанная к аккаунту
+   //TODO безопаснее вынести оплату отдельно
+//   пока так
 //   @CreditCardNumber(message="Not a valid credit card number")
-   //TODO пока так
    @Digits(integer = 16, fraction=0, message="Not a valid credit card number")
    private String ccNumber;
-
    @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$", message="Must be formatted MM/YY")
    private String ccExpiration;
-
    @Column(name = "cc_cvv")
    @Digits(integer=3, fraction=0, message="Invalid CVV")
    private String ccCVV;
 
    private Date createdAt;
-
    @ManyToOne
    private User user;
 
@@ -68,7 +65,7 @@ public class BooksOrder {
                        name = "book_on_order_id", referencedColumnName = "id"))
    private List<BookOnOrder> books = new ArrayList<>();
 
-   //TODO подумать как изменить
+   //TODO подумать как изменить название
    public void addBook(BookOnOrder book) {
       Long bookId = book.getBook().getId();
       BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);

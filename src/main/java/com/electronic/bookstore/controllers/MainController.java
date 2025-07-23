@@ -9,14 +9,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
@@ -24,6 +22,7 @@ import java.util.*;
 @RequestMapping("/")
 @SessionAttributes(value = "booksOrder")
 public class MainController {
+   private final String SESSION_BOOKS_ORDER = "booksOrder";
    @Autowired
    private BooksRepository booksRepository;
    @Autowired
@@ -47,12 +46,11 @@ public class MainController {
       return new BookOnOrder();
    }
 
-   //TODO не нравиться реализация статуса заказа
-   @ModelAttribute(name = "booksOrder")
+   @ModelAttribute(name = SESSION_BOOKS_ORDER)
    @Transactional
    public BooksOrder booksOrder() {
       BooksOrder booksOrder = new BooksOrder();
-      Status status = statusesRepository.findById("CRTD").get();
+      Status status = getStatusById("CRTD");
       booksOrder.setStatus(status);
       return booksOrder;
    }
@@ -86,7 +84,7 @@ public class MainController {
          if (booksOrder.isPresent()) {
             BooksOrder order = booksOrder.get();
             if (Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
-               model.addAttribute("booksOrder", order);
+               model.addAttribute(SESSION_BOOKS_ORDER, order);
             }
          }
       }
@@ -102,13 +100,12 @@ public class MainController {
       return "shoppingHistoryPage";
    }
 
-   //TODO как сделать лучше?
    @PostMapping("/addBookToOrder")
    public String addBookToOrder(@RequestParam("id") Long bookId,
                                 Model model,
                                 HttpServletRequest request)
    {
-      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
       Optional<Book> book = booksRepository.findById(bookId);
       if (book.isPresent()) {
          booksOrder.addBook(new BookOnOrder(book.get(), 1L));
@@ -121,7 +118,7 @@ public class MainController {
                                   Model model,
                                   HttpServletRequest request)
    {
-      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
       Optional<Book> book = booksRepository.findById(bookId);
       if (book.isPresent()) {
          booksOrder.addBook(new BookOnOrder(book.get(), -1L));
@@ -134,14 +131,14 @@ public class MainController {
                                      Model model,
                                      HttpServletRequest request)
    {
-      BooksOrder booksOrder = (BooksOrder) model.getAttribute("booksOrder");
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
       booksOrder.deleteBook(bookId);
       return "redirect:" + request.getHeader("Referer");
    }
 
    @PostMapping("/cart")
    @Transactional
-   public String saveOrder(@Valid @ModelAttribute(name = "booksOrder") BooksOrder booksOrder,
+   public String saveOrder(@Valid @ModelAttribute(name = SESSION_BOOKS_ORDER) BooksOrder booksOrder,
                            Errors errors,
                            @AuthenticationPrincipal UserDetails userDetails,
                            SessionStatus sessionStatus)
@@ -151,7 +148,7 @@ public class MainController {
       }
       User user = usersRepository.findByEmail(userDetails.getUsername());
       booksOrder.setUser(user);
-      Status status = statusesRepository.findById("SAVD").get();
+      Status status = getStatusById("SAVD");
       booksOrder.setStatus(status);
       booksOrder.setCreatedAt(new Date());
       ordersRepository.save(booksOrder);
@@ -182,7 +179,7 @@ public class MainController {
                return "redirect:/";
             }
          }
-         Status status = statusesRepository.findById("CMPL").get();
+         Status status = getStatusById("CMPL");
          order.setStatus(status);
          booksRepository.saveAll(books);
          ordersRepository.save(order);
@@ -190,31 +187,32 @@ public class MainController {
       return "redirect:/shopping-history";
    }
 
-   //TODO надо сделать лучше, мб сделать проверку как в order()
    @DeleteMapping("/deleteCart")
    @Transactional
    public String deleteOrder(@RequestParam("id") Long id,
                              @AuthenticationPrincipal UserDetails userDetails)
    {
-      //TODO сделать проверку на статус заказа !!! В ШАБЛОНЕ !!! и тут
-      // если ещё не оплачет и не получен, то можно удалять, иначе нельзя
-      if (ordersRepository.existsById(id)) {
-         Optional<UserBooksOrder> userBooksOrder = userBooksOrdersRepository.findByOrderId(id);
-         if (userBooksOrder.isPresent()) {
-            User user = usersRepository.findByEmail(userDetails.getUsername());
-            if (Objects.equals(userBooksOrder.get().getUserId(), user.getId())) {
+      Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
+      if (booksOrder.isPresent()) {
+         BooksOrder order = booksOrder.get();
+         if (!order.isCompleted()) {
+            if (Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
                userBooksOrdersRepository.deleteByOrderId(id);
                ordersRepository.deleteById(id);
-            } else {
-               System.out.println("ошибка удаления заказа: текущий пользователь и пользователь заказа различны");
-               return "redirect:/";
+               return "redirect:/shopping-history";
             }
-         } else {
-            System.out.println("ошибка сохранения заказа: заказ сохранен, но не привязан к пользователю");
          }
-      } else {
-         System.out.println("попытка удаления не сохраненного заказа");
       }
-      return "redirect:/shopping-history";
+      return "redirect:/";
+   }
+
+   //TODO надо придумать как реализовать ошибку
+   private Status getStatusById(String id) {
+      Optional<Status> status = statusesRepository.findById(id);
+      if (status.isPresent()) {
+         return status.get();
+      }
+      //надо выводить ошибку
+      return null;
    }
 }

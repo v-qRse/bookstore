@@ -17,7 +17,7 @@ public class Status {
    @Column(name = "type")
    private StatusType type;
 
-   //TODO по идее
+   //по идее
    // заказ изменяется
    // заказ доставляется
    public enum StatusType {
