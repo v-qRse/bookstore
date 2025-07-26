@@ -17,16 +17,33 @@
         <div>
             <p>Заказы</p>
 
-            <div th:each="order: ${orders}" style="border: 2px solid black">
+            <div th:each="order: ${orders}" style="border: 2px solid black; margin: 10px;">
                 <p>ID заказа <span th:text="${order.id}"></span></p>
-                <div th:each="b: ${order.books}" style="border: 2px solid gray">
+                <div th:each="b: ${order.books}" style="border: 2px solid gray; margin: 5px;">
                     <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}"></a>
-                    <p>Количество <span th:text="${b.quantity}"></span></p>
+
+                    <div th:if="${b.isValidQuantity() || order.isCompleted()}">
+                        <p>Количество <span th:text="${b.quantity}"></span></p>
+                    </div>
+
+                    <div th:unless="${b.isValidQuantity() || order.isCompleted()}" style="color: red;">
+                        <div th:if="${b.book.quantity > 0}">
+                            <p>
+                                В заказе <span th:text="${b.quantity}"></span>
+                                из <span th:text="${b.book.quantity}"></span> возможных
+                            </p>
+                        </div>
+
+                        <div th:unless="${b.book.quantity > 0}">
+                            Данный товар закончился
+                        </div>
+                    </div>
                 </div>
 
                 <div th:if="${order.isCompleted()}">
                     <p th:text="${order.status.description}"></p>
                 </div>
+
                 <div th:unless="${order.isCompleted()}">
                     <a th:href="@{/cart(id=${order.id})}">Изменить заказ</a>
 

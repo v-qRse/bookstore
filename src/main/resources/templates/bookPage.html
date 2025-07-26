@@ -42,36 +42,58 @@
                 Цена: <span th:text="*{price}"></span>
             </p>
 
-            <div th:if="*{quantity > 0}">
-                <div th:if="${!booksOrder.containBook(book.id)}">
-                    <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
-                        <button>
-                            Добавление в корзину
-                        </button>
-                    </form>
-                </div>
+            <div>
+                <p th:if="*{quantity < 1}" style="color: red;">Товар закончился</p>
+                <p th:if="*{quantity >= 1 && quantity < 5}">Осталось мало</p>
 
-                <div th:unless="${!booksOrder.containBook(book.id)}">
-                    <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
-                        <button>
-                            +
-                        </button>
-                    </form>
+                <div th:if="${booksOrder.containBook(book.id)}">
+                    <div th:if="${booksOrder.isBookValidQuantityById(book.id)}">
+                        <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
+                            <button>
+                                +
+                            </button>
+                        </form>
 
-                    <p th:text="${booksOrder.getQuantityById(book.id)}">
-                    </p>
+                        <p th:text="${booksOrder.getQuantityById(book.id)}">
+                        </p>
 
-                    <form action="#" th:action="@{/putBookFromOrder(id=*{id})}" method="post">
-                        <button>
-                            -
-                        </button>
-                    </form>
+                        <form action="#" th:action="@{/putBookFromOrder(id=*{id})}" method="post">
+                            <button>
+                                -
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:unless="${booksOrder.isBookValidQuantityById(book.id)}">
+                        <div th:if="*{quantity > 0}">
+                            <p style="color: red;">
+                                В заказе <span th:text="${booksOrder.getQuantityById(book.id)}"></span>
+                                из <span th:text="*{quantity}"></span> возможных
+                            </p>
+
+                            <form action="#" th:action="@{/changeBookFromOrderToMax(id=${book.id})}" th:method="post">
+                                <button>
+                                    Изменить на максимально возможное
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
                     <form action="#" th:action="@{/deleteBookFromOrder(id=*{id})}" th:method="delete">
                         <button>
                             Удалить из корзины
                         </button>
                     </form>
+                </div>
+
+                <div th:unless="${booksOrder.containBook(book.id)}">
+                    <div th:if="*{quantity > 0}">
+                        <form action="#" th:action="@{/addBookToOrder(id=*{id})}" method="post">
+                            <button>
+                                Добавление в корзину
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

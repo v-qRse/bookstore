@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+//TODO отделить данные от реализации, мб через сервисы
 @Data
 @Entity
 @AllArgsConstructor
@@ -65,19 +66,27 @@ public class BooksOrder {
                        name = "book_on_order_id", referencedColumnName = "id"))
    private List<BookOnOrder> books = new ArrayList<>();
 
-   //TODO подумать как изменить название
-   public void addBook(BookOnOrder book) {
-      Long bookId = book.getBook().getId();
-      BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);
+   public void changeOrRemoveQuantityBookOnOrder(Book book, Long difference) {
+      BookOnOrder bookOnOrder = getBookOnOrderByBookId(book.getId());
       if (bookOnOrder != null) {
-         Long quantity = bookOnOrder.getQuantity() + book.getQuantity();
+         Long quantity = bookOnOrder.getQuantity() + difference;
          if (quantity <= 0) {
             books.remove(bookOnOrder);
-         } else if (quantity <= bookOnOrder.getBook().getQuantity()) {
+         } else if (quantity <= book.getQuantity()) {
             bookOnOrder.setQuantity(quantity);
          }
       } else {
-         books.add(book);
+         bookOnOrder = new BookOnOrder(book, difference);
+         if (bookOnOrder.isValidQuantity()) {
+            books.add(bookOnOrder);
+         }
+      }
+   }
+
+   public void changeQuantityBookOnOrderToMaxPossible(Long bookId) {
+      BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);
+      if (bookOnOrder != null) {
+         bookOnOrder.changeQuantityToMaxPossible();
       }
    }
 
@@ -94,6 +103,14 @@ public class BooksOrder {
          return bookOnOrder.getQuantity();
       }
       return 0L;
+   }
+
+   public boolean isBookValidQuantityById(Long bookId) {
+      BookOnOrder bookOnOrder = getBookOnOrderByBookId(bookId);
+      if (bookOnOrder != null) {
+         return bookOnOrder.isValidQuantity();
+      }
+      return false;
    }
 
    public boolean containBook(Long bookId) {

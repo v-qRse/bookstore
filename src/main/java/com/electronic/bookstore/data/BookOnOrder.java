@@ -22,4 +22,15 @@ public class BookOnOrder {
       this.book = book;
       this.quantity = quantity;
    }
+
+   public boolean isValidQuantity() {
+      if (book == null) {
+         return false;
+      }
+      return quantity > 0 && quantity <= book.getQuantity();
+   }
+
+   public void changeQuantityToMaxPossible() {
+      quantity = book.getQuantity();
+   }
 }

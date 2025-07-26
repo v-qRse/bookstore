@@ -17,26 +17,45 @@
         <div style="border: 2px solid red">
             <h2>Книги в заказе</h2>
 
-            <div th:each="b : ${booksOrder.books}" style="border: 2px solid black">
+            <div th:each="b : ${booksOrder.books}" style="border: 2px solid black; margin: 10px;">
                 <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}">
                     Здесь должна быть картинка
                 </a>
+                <p th:if="${b.book.quantity < 1}" style="color: red;">Товар закончился</p>
+                <p th:if="${b.book.quantity >= 1 && b.book.quantity < 5}">Осталось мало</p>
 
                 <div>
-                    <form action="#" th:action="@{/addBookToOrder(id=${b.book.id})}" method="post">
-                        <button>
-                            +
-                        </button>
-                    </form>
+                    <div th:if="${booksOrder.isBookValidQuantityById(b.book.id)}">
+                        <form action="#" th:action="@{/addBookToOrder(id=${b.book.id})}" method="post">
+                            <button>
+                                +
+                            </button>
+                        </form>
 
-                    <p th:text="${booksOrder.getQuantityById(b.book.id)}">
-                    </p>
+                        <p th:text="${b.quantity}">
+                        </p>
 
-                    <form action="#" th:action="@{/putBookFromOrder(id=${b.book.id})}" method="post">
-                        <button>
-                            -
-                        </button>
-                    </form>
+                        <form action="#" th:action="@{/putBookFromOrder(id=${b.book.id})}" method="post">
+                            <button>
+                                -
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:unless="${booksOrder.isBookValidQuantityById(b.book.id)}">
+                        <div th:if="${b.book.quantity > 0}">
+                            <p style="color: red;">
+                                В заказе <span th:text="${b.quantity}"></span>
+                                из <span th:text="${b.book.quantity}"></span> возможных
+                            </p>
+
+                            <form action="#" th:action="@{/changeBookFromOrderToMax(id=${b.book.id})}" th:method="post">
+                                <button>
+                                    Изменить на максимально возможное
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
                     <form action="#" th:action="@{/deleteBookFromOrder(id=${b.book.id})}" th:method="delete">
                         <button>
@@ -120,7 +139,7 @@
                 </p>
 
                 <button>
-                    Создать заказ
+                    Сохранить заказ
                 </button>
             </form>
         </div>

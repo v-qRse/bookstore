@@ -26,8 +26,6 @@ public class MainController {
    @Autowired
    private BooksRepository booksRepository;
    @Autowired
-   private BooksOnOrderRepository booksOnOrderRepository;
-   @Autowired
    private OrdersRepository ordersRepository;
    @Autowired
    private UsersRepository usersRepository;
@@ -50,7 +48,7 @@ public class MainController {
    @Transactional
    public BooksOrder booksOrder() {
       BooksOrder booksOrder = new BooksOrder();
-      Status status = getStatusById("CRTD");
+      Status status = findStatusOrderById("CRTD");
       booksOrder.setStatus(status);
       return booksOrder;
    }
@@ -107,8 +105,8 @@ public class MainController {
    {
       BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
       Optional<Book> book = booksRepository.findById(bookId);
-      if (book.isPresent()) {
-         booksOrder.addBook(new BookOnOrder(book.get(), 1L));
+      if (book.isPresent() && booksOrder != null) {
+         booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), 1L);
       }
       return "redirect:" + request.getHeader("Referer");
    }
@@ -120,8 +118,20 @@ public class MainController {
    {
       BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
       Optional<Book> book = booksRepository.findById(bookId);
-      if (book.isPresent()) {
-         booksOrder.addBook(new BookOnOrder(book.get(), -1L));
+      if (book.isPresent() && booksOrder != null) {
+         booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), -1L);
+      }
+      return "redirect:" + request.getHeader("Referer");
+   }
+
+   @PostMapping("/changeBookFromOrderToMax")
+   public String changeBookFromOrderToMax(@RequestParam("id") Long bookId,
+                                  Model model,
+                                  HttpServletRequest request)
+   {
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
+      if (booksOrder != null) {
+         booksOrder.changeQuantityBookOnOrderToMaxPossible(bookId);
       }
       return "redirect:" + request.getHeader("Referer");
    }
@@ -148,7 +158,7 @@ public class MainController {
       }
       User user = usersRepository.findByEmail(userDetails.getUsername());
       booksOrder.setUser(user);
-      Status status = getStatusById("SAVD");
+      Status status = findStatusOrderById("SAVD");
       booksOrder.setStatus(status);
       booksOrder.setCreatedAt(new Date());
       ordersRepository.save(booksOrder);
@@ -176,10 +186,10 @@ public class MainController {
                books.add(book);
             } else {
                //TODO ошибка запроса
-               return "redirect:/";
+               return "redirect:/shopping-history";
             }
          }
-         Status status = getStatusById("CMPL");
+         Status status = findStatusOrderById("CMPL");
          order.setStatus(status);
          booksRepository.saveAll(books);
          ordersRepository.save(order);
@@ -195,19 +205,17 @@ public class MainController {
       Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
       if (booksOrder.isPresent()) {
          BooksOrder order = booksOrder.get();
-         if (!order.isCompleted()) {
-            if (Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
-               userBooksOrdersRepository.deleteByOrderId(id);
-               ordersRepository.deleteById(id);
-               return "redirect:/shopping-history";
-            }
+         if (!order.isCompleted() && Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
+            userBooksOrdersRepository.deleteByOrderId(id);
+            ordersRepository.deleteById(id);
+            return "redirect:/shopping-history";
          }
       }
       return "redirect:/";
    }
 
    //TODO надо придумать как реализовать ошибку
-   private Status getStatusById(String id) {
+   private Status findStatusOrderById(String id) {
       Optional<Status> status = statusesRepository.findById(id);
       if (status.isPresent()) {
          return status.get();
