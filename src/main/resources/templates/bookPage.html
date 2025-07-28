@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <head>
     </head>
 
@@ -10,7 +11,33 @@
         </h1>
 
         <div>
-            <a th:href="@{/}">Домашняя страница</a>
+            <div>
+                <p sec:authorize="!isAuthenticated()">
+                    <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Войти</a>
+                </p>
+                <p sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">Выйти</a>
+                </p>
+
+                <a th:href="@{/register}">Регистрация</a>
+            </div>
+
+            <p>
+                <a th:href="@{/}">Домашняя страница</a>
+            </p>
+
+            <div sec:authorize="isAuthenticated()">
+                <p sec:authorize="hasRole('USER')">
+                    <a th:href="@{/user}">Страница клиента</a>
+                    <a th:if="${booksOrder != null && !booksOrder.books.isEmpty()}" th:href="@{/cart}">Текущий заказ</a>
+                </p>
+                <p sec:authorize="hasRole('EMPLOYEE')">
+                    <a th:href="@{/employee}">Страница работника</a>
+                </p>
+                <p sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}">Страница администратора</a>
+                </p>
+            </div>
         </div>
 
         <div th:object="${book}">
@@ -35,15 +62,11 @@
             <p>
                 Количество страниц: <span th:text="*{pages}"></span>
             </p>
-            <p>
-                Цена: <span th:text="*{price}"></span>
-            </p>
-            <p>
-                Цена: <span th:text="*{price}"></span>
-            </p>
 
             <div>
                 <p th:if="*{quantity < 1}" style="color: red;">Товар закончился</p>
+                <p th:unless="*{quantity < 1}">Цена: <span th:text="*{price}"></span></p>
+
                 <p th:if="*{quantity >= 1 && quantity < 5}">Осталось мало</p>
 
                 <div th:if="${booksOrder.containBook(book.id)}">

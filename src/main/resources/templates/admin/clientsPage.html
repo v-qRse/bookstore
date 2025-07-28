@@ -24,7 +24,7 @@
         </form>
 
         <div>
-            <div th:each="client: ${clients}">
+            <div th:each="client: ${clients}" style="border: 2px solid black; margin: 10px;">
                 <p>ID: <span th:text="${client.id}"></span></p>
                 <p>Имя: <span th:text="${client.firstName + ' ' + client.lastName}"></span></p>
                 <p>Роли:

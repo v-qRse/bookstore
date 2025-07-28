@@ -14,7 +14,7 @@
             <a th:href="@{/}">Домашняя страница</a>
             <a th:href="@{/admin}">Страница администраторов</a>
             <a th:href="@{/admin/clients}">Список клиентов</a>
-            <a th:href="@{/admin/add/employee}">Создать сотрудника</a>
+            <a th:href="@{/admin/employee/add}">Создать сотрудника</a>
         </div>
 
         <form action="#" th:action="@{/admin/employees}" method="get" th:object="${request}">
@@ -25,7 +25,7 @@
         </form>
 
         <div>
-            <div th:each="client: ${clients}">
+            <div th:each="client: ${clients}" style="border: 2px solid black; margin: 10px;">
                 <p>ID: <span th:text="${client.id}"></span></p>
                 <p>Имя: <span th:text="${client.firstName + ' ' + client.lastName}"></span></p>
                 <p>Роли:
@@ -33,6 +33,12 @@
                         <span th:text="${role.name}">;</span>
                     </span>
                 </p>
+
+                <form action="#" th:action="@{/admin/employee/delete(id=${client.id})}" th:method="delete">
+                    <button>
+                        Удалить пользователя
+                    </button>
+                </form>
             </div>
         </div>
     </body>

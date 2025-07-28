@@ -18,6 +18,8 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.*;
 
+//TODO ПРИДУМАТЬ ОБЩУЮ СТРУКТУРУ ЗАПРОСА: КАК ДОЛЖЕН ВЫГЛЯДЕТЬ ЗАПРОС ИЗ НЕСКОЛЬКИХ СЛОВ,
+// ПРИ КАКИХ УСЛОВИЯХ ЗАПРОС ДОЛЖЕН БЫТЬ ПОДРАЗДЕЛОМ Т.Е. ВЫГЛЯДЕТЬ /РАЗДЕЛ/ПОДРАДЕЛ
 @Controller
 @RequestMapping("/")
 @SessionAttributes(value = "booksOrder")
@@ -72,6 +74,8 @@ public class MainController {
    // заказ обновляется, но не с страницы /cart?id="cartId",
    // так как при обращении к изменению, он изменяется и пересылается на ту же страницу и
    // запрашивает заказ из бд снова
+   //возможное решение: в пост запросах с redirect + request...
+   // добавить проверку на запрос с /cart?id="cartId" и убирать параметры
    @GetMapping("/cart")
    public String order(@RequestParam(value = "id", required = false) Long id,
                        @AuthenticationPrincipal UserDetails userDetails,
@@ -87,15 +91,6 @@ public class MainController {
          }
       }
       return "cartPage";
-   }
-
-   @GetMapping("/shopping-history")
-   public String shoppingHistoryPage(@AuthenticationPrincipal UserDetails userDetails,
-                                     Model model)
-   {
-      User user = usersRepository.findByEmail(userDetails.getUsername());
-      model.addAttribute("orders", user.getOrders());
-      return "shoppingHistoryPage";
    }
 
    @PostMapping("/addBookToOrder")
@@ -168,50 +163,7 @@ public class MainController {
          userBooksOrdersRepository.save(userBooksOrder);
       }
       sessionStatus.setComplete();
-      return "redirect:/shopping-history";
-   }
-
-   @PostMapping("/paidCart")
-   @Transactional
-   //не потокобезопасно
-   public String paidCart(@RequestParam("id") Long id) {
-      Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
-      if (booksOrder.isPresent()) {
-         BooksOrder order = booksOrder.get();
-         List<Book> books = new ArrayList<>();
-         for (BookOnOrder bookOnOrder: order.getBooks()) {
-            Book book = bookOnOrder.getBook();
-            if (book.getQuantity() >= bookOnOrder.getQuantity()) {
-               book.setQuantity(book.getQuantity() - bookOnOrder.getQuantity());
-               books.add(book);
-            } else {
-               //TODO ошибка запроса
-               return "redirect:/shopping-history";
-            }
-         }
-         Status status = findStatusOrderById("CMPL");
-         order.setStatus(status);
-         booksRepository.saveAll(books);
-         ordersRepository.save(order);
-      }
-      return "redirect:/shopping-history";
-   }
-
-   @DeleteMapping("/deleteCart")
-   @Transactional
-   public String deleteOrder(@RequestParam("id") Long id,
-                             @AuthenticationPrincipal UserDetails userDetails)
-   {
-      Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
-      if (booksOrder.isPresent()) {
-         BooksOrder order = booksOrder.get();
-         if (!order.isCompleted() && Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
-            userBooksOrdersRepository.deleteByOrderId(id);
-            ordersRepository.deleteById(id);
-            return "redirect:/shopping-history";
-         }
-      }
-      return "redirect:/";
+      return "redirect:/user/shopping-history";
    }
 
    //TODO надо придумать как реализовать ошибку

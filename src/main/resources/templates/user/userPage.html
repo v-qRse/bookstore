@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+    </head>
+
+    <body>
+        <h1>
+            User
+        </h1>
+
+        <div>
+            <div>
+                <p>
+                    <a th:href="@{/user/profile}">Мой профиль</a>
+                </p>
+                <p>
+                    <a th:href="@{/logout}">Выйти</a>
+                </p>
+            </div>
+
+            <p>
+                <a th:href="@{/}">Домашняя страница</a>
+            </p>
+
+            <p>
+                <a  th:href="@{/user/shopping-history}">Мои заказы</a>
+                <a th:if="${booksOrder != null && !booksOrder.books.isEmpty()}" th:href="@{/cart}">Текущий заказ</a>
+            </p>
+        </div>
+    </body>
+</html>

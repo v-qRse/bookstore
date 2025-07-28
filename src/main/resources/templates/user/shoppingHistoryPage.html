@@ -11,7 +11,12 @@
         </h1>
 
         <div>
-            <a th:href="@{/}">Домашняя страница</a>
+            <p>
+                <a th:href="@{/}">Домашняя страница</a>
+            </p>
+            <p>
+                <a th:href="@{/user}">Страница клиента</a>
+            </p>
         </div>
 
         <div>
@@ -21,6 +26,8 @@
                 <p>ID заказа <span th:text="${order.id}"></span></p>
                 <div th:each="b: ${order.books}" style="border: 2px solid gray; margin: 5px;">
                     <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}"></a>
+
+                    <p th:if="${b.book.quantity > 0}">Цена: <span th:text="${b.book.price}"></span></p>
 
                     <div th:if="${b.isValidQuantity() || order.isCompleted()}">
                         <p>Количество <span th:text="${b.quantity}"></span></p>
@@ -47,13 +54,16 @@
                 <div th:unless="${order.isCompleted()}">
                     <a th:href="@{/cart(id=${order.id})}">Изменить заказ</a>
 
-                    <form action="#" th:action="@{/deleteCart(id=${order.id})}" th:method="delete">
+                    <form action="#" th:action="@{/user/deleteCart(id=${order.id})}" th:method="delete">
                         <button>
                             Удалить заказ
                         </button>
                     </form>
 
-                    <form action="#" th:action="@{/paidCart(id=${order.id})}" th:method="post">
+                    <h4>Общая цена: </h4>
+                    <p th:text="${order.getPrice()}"></p>
+
+                    <form action="#" th:action="@{/user/paidCart(id=${order.id})}" th:method="post">
                         <button>
                             Оплатить
                         </button>

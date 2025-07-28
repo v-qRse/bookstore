@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">>
 
     <head>
     </head>
@@ -11,7 +12,27 @@
         </h1>
 
         <div>
-            <a th:href="@{/}">Домашняя страница</a>
+            <div>
+                <p sec:authorize="!isAuthenticated()">
+                    <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Войти</a>
+                </p>
+                <p sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">Выйти</a>
+                </p>
+
+                <a th:href="@{/register}">Регистрация</a>
+            </div>
+
+            <p>
+                <a th:href="@{/}">Домашняя страница</a>
+            </p>
+
+            <div sec:authorize="isAuthenticated()">
+                <p sec:authorize="hasRole('USER')">
+                    <a th:href="@{/user}">Страница клиента</a>
+                    <a th:if="${booksOrder != null && !booksOrder.books.isEmpty()}" th:href="@{/cart}">Текущий заказ</a>
+                </p>
+            </div>
         </div>
 
         <div style="border: 2px solid red">
@@ -21,7 +42,10 @@
                 <a th:text="${b.book.name}" th:href="@{/book(id=${b.book.id})}">
                     Здесь должна быть картинка
                 </a>
+
                 <p th:if="${b.book.quantity < 1}" style="color: red;">Товар закончился</p>
+                <p th:unless="${b.book.quantity < 1}">Цена: <span th:text="${b.book.price}"></span></p>
+
                 <p th:if="${b.book.quantity >= 1 && b.book.quantity < 5}">Осталось мало</p>
 
                 <div>
@@ -66,7 +90,7 @@
             </div>
 
             <h3>Общая цена: </h3>
-            <span th:text="${booksOrder.getPrice()}"></span>
+            <p th:text="${booksOrder.getPrice()}"></p>
         </div>
 
         <div th:if="${booksOrder.getPrice() > 0}" style="border: 2px solid blue">
