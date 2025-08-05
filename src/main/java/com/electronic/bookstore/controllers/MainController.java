@@ -1,6 +1,10 @@
 package com.electronic.bookstore.controllers;
 
 import com.electronic.bookstore.data.*;
+import com.electronic.bookstore.data.book.Book;
+import com.electronic.bookstore.data.order.BookOnOrder;
+import com.electronic.bookstore.data.order.BooksOrder;
+import com.electronic.bookstore.data.order.Status;
 import com.electronic.bookstore.repositories.*;
 import com.electronic.bookstore.security.data.User;
 import com.electronic.bookstore.security.repositories.UsersRepository;
@@ -64,6 +68,7 @@ public class MainController {
    public String bookPage(@RequestParam("id") Long id, Model model) {
       Optional<Book> book = booksRepository.findById(id);
       if (book.isEmpty()) {
+         //возвращать на страницу, с которой был запрос
          return "redirect:/";
       }
       model.addAttribute("book", book.get());

@@ -1,9 +1,9 @@
 package com.electronic.bookstore.controllers;
 
-import com.electronic.bookstore.data.Book;
-import com.electronic.bookstore.data.BookOnOrder;
-import com.electronic.bookstore.data.BooksOrder;
-import com.electronic.bookstore.data.Status;
+import com.electronic.bookstore.data.book.Book;
+import com.electronic.bookstore.data.order.BookOnOrder;
+import com.electronic.bookstore.data.order.BooksOrder;
+import com.electronic.bookstore.data.order.Status;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.OrdersRepository;
 import com.electronic.bookstore.repositories.StatusesRepository;
@@ -50,8 +50,7 @@ public class UserController {
    }
 
    @GetMapping("/profile")
-   public String userProfile()
-   {
+   public String userProfile() {
       return "/user/profile";
    }
 
@@ -71,10 +70,10 @@ public class UserController {
    public String changeProfile(@Valid @ModelAttribute("user") User user, Errors errors,
                                @AuthenticationPrincipal UserDetails userDetails)
    {
-      User profile = usersRepository.findByEmail(userDetails.getUsername());
       if (errors.hasErrors()) {
          return "/user/profile";
       }
+      User profile = usersRepository.findByEmail(userDetails.getUsername());
       if (Objects.equals(profile.getId(), user.getId())) {
          usersRepository.save(user);
       }
@@ -96,6 +95,7 @@ public class UserController {
                books.add(book);
             } else {
                //TODO ошибка запроса
+               //в модель отправлять ошибку?
                return "redirect:/user/shopping-history";
             }
          }

@@ -1,7 +1,7 @@
 package com.electronic.bookstore.controllers;
 
-import com.electronic.bookstore.data.Book;
-import com.electronic.bookstore.data.Genre;
+import com.electronic.bookstore.data.book.Book;
+import com.electronic.bookstore.data.book.Genre;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.GenresRepository;
 import jakarta.validation.Valid;

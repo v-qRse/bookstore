@@ -1,4 +1,4 @@
-package com.electronic.bookstore.data;
+package com.electronic.bookstore.data.order;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

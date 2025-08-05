@@ -1,6 +1,6 @@
 package com.electronic.bookstore.security.data;
 
-import com.electronic.bookstore.data.BooksOrder;
+import com.electronic.bookstore.data.order.BooksOrder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

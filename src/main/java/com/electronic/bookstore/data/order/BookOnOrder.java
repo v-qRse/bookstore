@@ -1,5 +1,6 @@
-package com.electronic.bookstore.data;
+package com.electronic.bookstore.data.order;
 
+import com.electronic.bookstore.data.book.Book;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

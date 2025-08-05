@@ -1,4 +1,4 @@
-package com.electronic.bookstore.data;
+package com.electronic.bookstore.data.book;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

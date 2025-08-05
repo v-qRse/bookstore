@@ -1,5 +1,6 @@
-package com.electronic.bookstore.data;
+package com.electronic.bookstore.data.order;
 
+import com.electronic.bookstore.data.book.Book;
 import com.electronic.bookstore.security.data.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;

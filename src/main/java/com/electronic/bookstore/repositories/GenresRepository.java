@@ -1,6 +1,6 @@
 package com.electronic.bookstore.repositories;
 
-import com.electronic.bookstore.data.Genre;
+import com.electronic.bookstore.data.book.Genre;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.electronic.bookstore;
 
-import com.electronic.bookstore.data.Book;
+import com.electronic.bookstore.data.book.Book;
 import com.electronic.bookstore.repositories.BooksRepository;
 import com.electronic.bookstore.repositories.GenresRepository;
 import org.springframework.boot.ApplicationRunner;
