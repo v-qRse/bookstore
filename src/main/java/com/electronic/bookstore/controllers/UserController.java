@@ -84,6 +84,27 @@ public class UserController {
    @Transactional
    //не потокобезопасно
    public String paidCart(@RequestParam("id") Long id) {
+      /**
+       * BooksOrder order = ordersService.getById(id);
+       * booksService.saveAndChangeQuantityBook(order);
+       * ordersService.saveWithStatus("CMPL");
+       *
+       ** saveAndChangeQuantityBook
+       * List<Book> books = new ArrayList<>();
+       * for (BookOnOrder bookOnOrder: order.getBooks()) {
+       *    Book book = bookOnOrder.getBook();
+       *    if (book.getQuantity() >= bookOnOrder.getQuantity()) {
+       *       book.setQuantity(book.getQuantity() - bookOnOrder.getQuantity());
+       *       books.add(book);
+       *    } else {
+       *       //TODO ошибка запроса
+       *       //в модель отправлять ошибку?
+       *       return "redirect:/user/shopping-history";
+       *    }
+       * }
+       * booksRepository.saveAll(books);
+       */
+
       Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
       if (booksOrder.isPresent()) {
          BooksOrder order = booksOrder.get();
@@ -112,6 +133,10 @@ public class UserController {
    public String deleteOrder(@RequestParam("id") Long id,
                              @AuthenticationPrincipal UserDetails userDetails)
    {
+      /**
+       * всё в общий метод удаления заказа сервиса
+       */
+
       Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
       if (booksOrder.isPresent()) {
          BooksOrder order = booksOrder.get();

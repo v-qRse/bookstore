@@ -42,6 +42,7 @@ public class MainController {
 
    @ModelAttribute(name = "books")
    public List<Book> books() {
+      //booksService.getAllWithSortAndЧТО-ТО();
       return booksRepository.findAll();
    }
 
@@ -53,6 +54,7 @@ public class MainController {
    @ModelAttribute(name = SESSION_BOOKS_ORDER)
    @Transactional
    public BooksOrder booksOrder() {
+      //orderService.createOrderWithStatus("CRTD");
       BooksOrder booksOrder = new BooksOrder();
       Status status = findStatusOrderById("CRTD");
       booksOrder.setStatus(status);
@@ -66,6 +68,16 @@ public class MainController {
 
    @GetMapping("/book")
    public String bookPage(@RequestParam("id") Long id, Model model) {
+      /**
+       * Book book = bookService.getBookById(id);
+       * model.addAttribute("book", bookService.getBookById(id));
+       *
+       * Optional<Book> book = booksRepository.findById(id);
+       * if (book.isEmpty()) {
+       *    return new Book();
+       * }
+       * return book.get();
+       **/
       Optional<Book> book = booksRepository.findById(id);
       if (book.isEmpty()) {
          //возвращать на страницу, с которой был запрос
@@ -87,6 +99,22 @@ public class MainController {
                        Model model)
    {
       if (id != null) {
+         /**
+          * BooksOrder order = orderService.getByIdCurrentUser(id, userDetails);
+          * model.addAttribute(SESSION_BOOKS_ORDER, order);
+          *
+          * Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
+          * if (booksOrder.isPresent()) {
+          *    return compareAtUserOrder(booksOrder, userDetails);
+          * }
+          * return //пустой заказ
+          *
+          *
+          * if (Objects.equals(userDetails.getUsername(), order.getUser().getEmail())) {
+          *    return order;
+          * }
+          * return //пустой заказ
+          */
          Optional<BooksOrder> booksOrder = ordersRepository.findById(id);
          if (booksOrder.isPresent()) {
             BooksOrder order = booksOrder.get();
@@ -103,11 +131,7 @@ public class MainController {
                                 Model model,
                                 HttpServletRequest request)
    {
-      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
-      Optional<Book> book = booksRepository.findById(bookId);
-      if (book.isPresent() && booksOrder != null) {
-         booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), 1L);
-      }
+      changeOrRemoveQuantityBookOnOrder(bookId, model, 1L);
       return "redirect:" + request.getHeader("Referer");
    }
 
@@ -116,12 +140,23 @@ public class MainController {
                                   Model model,
                                   HttpServletRequest request)
    {
-      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
-      Optional<Book> book = booksRepository.findById(bookId);
-      if (book.isPresent() && booksOrder != null) {
-         booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), -1L);
-      }
+      changeOrRemoveQuantityBookOnOrder(bookId, model, -1L);
       return "redirect:" + request.getHeader("Referer");
+   }
+
+   private void changeOrRemoveQuantityBookOnOrder(Long bookId, Model model, Long difference) {
+      /**
+       * Book book = booksService.getById(bookId);
+       * BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
+       * if (booksOrder != null) {
+       *    booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), difference);
+       * }
+       */
+      Optional<Book> book = booksRepository.findById(bookId);
+      BooksOrder booksOrder = (BooksOrder) model.getAttribute(SESSION_BOOKS_ORDER);
+      if (book.isPresent() && booksOrder != null) {
+         booksOrder.changeOrRemoveQuantityBookOnOrder(book.get(), difference);
+      }
    }
 
    @PostMapping("/changeBookFromOrderToMax")
@@ -156,10 +191,20 @@ public class MainController {
       if (errors.hasErrors()) {
          return "cartPage";
       }
+      /**
+       * //?
+       * booksOrder = setOrderUser(booksOrder, userDetails.getUsername());
+       * booksOrder = setOrderStatus(booksOrder, "SAVD");
+       * booksOrder = setOrderData(booksOrder, new Data());
+       * ordersRepository.save(booksOrder);
+       *
+       * createUserBooksOrders(booksOrder, user);
+       */
       User user = usersRepository.findByEmail(userDetails.getUsername());
       booksOrder.setUser(user);
       Status status = findStatusOrderById("SAVD");
       booksOrder.setStatus(status);
+      //TODO мб сделать, что если дата уже есть, то обновлять не надо
       booksOrder.setCreatedAt(new Date());
       ordersRepository.save(booksOrder);
 

@@ -15,6 +15,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
+   /**
+    * жанры и книги добавить в один сервис
+    */
+
    @Autowired
    private BooksRepository booksRepository;
    @Autowired
